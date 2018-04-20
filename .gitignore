@@ -1,3 +1,5 @@
-src/.idea
-src/.gradle
-src/build
+.idea/*
+.gradle/*
+gradle/*
+build/*
+kodiak.iml
