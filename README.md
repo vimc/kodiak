@@ -2,12 +2,12 @@
 ## Usage
 ### Setup
 ```
-kodiak setup PATH_TO_CONFIG TARGETS...
+sudo ./scripts/setup.sh PATH_TO_CONFIG TARGETS...
 ```
-
-Copy the config in and filter it to the specified targets. Only these targets
-can be interacted with in this Kodiak instance. These targets are then the 
-default in other commands (backup, restore, list).
+This script copies the config file provided into this directory, 
+builds a new docker image, and installs the `./kodiak` wrapper script to your path.
+The config is then mounted as a docker volume into the `kodiak` container when 
+ using the `./kodiak` script.
 
 ### Restore
 ```

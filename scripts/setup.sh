@@ -10,4 +10,13 @@ config_path=$1
 HERE=${BASH_SOURCE%/*}
 
 # Copy config
-cp "$config_path" ${HERE}/config.json
+cp "$config_path" ${HERE}/../config/config.json
+
+${HERE}/build-app.sh
+
+ln -sf $(realpath ${HERE}/kodiak) /usr/local/bin/kodiak
+
+echo "-----------------------------------------------"
+echo "Setup complete. You can now: "
+echo "backup:           Run kodiak backup"
+echo "restore:          Run kodiak restore"
