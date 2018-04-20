@@ -18,7 +18,7 @@ data class Target(val id: String,
                   val remoteBucket: String,
                   val localPath: String)
 
-class Config(configPath: String) : ConfigWrapper {
+class Config(configPath: String = "/etc/kodiak/config.json") : ConfigWrapper {
 
     private val properties: JsonObject
     private val gson = GsonBuilder()
