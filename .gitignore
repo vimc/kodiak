@@ -2,6 +2,6 @@
 .gradle/*
 gradle/*
 gradlew
-gradle.bat
+gradlew.bat
 build/*
 kodiak.iml
