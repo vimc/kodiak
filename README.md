@@ -5,9 +5,8 @@
 sudo ./scripts/setup.sh PATH_TO_CONFIG TARGETS...
 ```
 This script copies the config file provided into this directory, 
-builds a new docker image, and installs the `./kodiak` wrapper script to your path.
-The config is then mounted as a docker volume into the `kodiak` container when 
- using the `./kodiak` script.
+builds a new docker image, and installs the `./kodiak` wrapper script to your path as `kodiak`.
+The config is mounted as a docker volume into the container when running `kodiak`.
 
 ### Restore
 ```

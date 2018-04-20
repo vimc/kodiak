@@ -4,8 +4,7 @@ set -e
 git_id=$(git rev-parse --short=7 HEAD)
 git_branch=$(git symbolic-ref --short HEAD)
 
-# Create an image based on the shared build env that compiles, tests and dockerises
-# the app
+# Create an image that compiles, tests and dockerises the app
 docker build --tag kodiak-build \
 	--build-arg git_id=$git_id \
 	--build-arg git_branch=$git_branch \
