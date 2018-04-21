@@ -30,6 +30,7 @@ class ConfigTests {
         assertThat(targets.count()).isEqualTo(1)
 
         val target = targets[0]
+        
         assertThat(target.id).isEqualTo("test")
         assertThat(target.encrypted).isTrue()
         assertThat(target.localPath).isEqualTo("/test/starport/testtarget")
