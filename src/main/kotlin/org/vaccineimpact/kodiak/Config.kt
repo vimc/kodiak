@@ -51,6 +51,7 @@ class Config(configPath: String = "/etc/kodiak/config.json") : ConfigWrapper {
     override val targets: List<Target> = gson
             .fromJson<List<Target>>(this.get("targets"), object : TypeToken<List<Target>>() {}.type)
             .map { it.copy(localPath = "${this.starportPath}/${it.localPath}") }
+
 }
 
 class MissingConfigurationKey(key: String) : Exception("Missing configuration key '$key'")

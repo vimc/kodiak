@@ -33,10 +33,6 @@ RUN ./gradlew
 # Copy source
 COPY ./src/ /kodiak/src/
 
-ARG git_id='UNKNOWN'
-ARG git_branch='UNKNOWN'
-ARG name=kodiak
-
 RUN /kodiak/scripts/create-test-config.sh
 
 CMD ./gradlew test :distDocker
