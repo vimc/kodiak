@@ -43,7 +43,7 @@ compileTestKotlin {
 }
 
 distDocker {
-    baseImage = "libsodium"
+    baseImage = "openjdk"
     dependsOn = [build]
     tag = "kodiak"
 }
