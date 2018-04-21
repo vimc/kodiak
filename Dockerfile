@@ -1,4 +1,4 @@
-FROM libsodium
+FROM openjdk
 
 # Install docker
 RUN apt-get update
