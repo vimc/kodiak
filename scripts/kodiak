@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
 set -e
 
+kodiak_version=$(git rev-parse --short=7 HEAD)
+registry=docker.montagu.dide.ic.ac.uk:5000
+kodiak_image=${registry}/kodiak:${kodiak_version}
+
+docker pull ${kodiak_image}
+
 docker run \
     --rm \
     -v kodiak_config:/etc/kodiak/ \
     --network=host \
-    kodiak "$@"
+    ${kodiak_image} "$@"
