@@ -21,6 +21,7 @@ mainClassName = "org.vaccineimpact.kodiak.MainKt"
 repositories {
     mavenCentral()
 }
+
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile "com.google.code.gson:gson:2.2.4"
