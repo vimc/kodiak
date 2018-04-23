@@ -86,7 +86,7 @@ the remote copy.
 ## Config
 `starport_path` is where Kodiak reads data from when backing up, and writes to
 when restoring. `working_path` is where Kodiak stores hashes, as well as the
-chunked encrypted files. So far backup files move from `starport_path` to 
+chunked encrypted files. So for backup files move from `starport_path` to 
 `working_path` (encrypted and chunked) and then to S3. On restore the route is
 reversed.
 
