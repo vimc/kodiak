@@ -12,6 +12,7 @@ docker build --tag kodiak-build \
 
 # Run the created image
 docker run \
+    -it \
     -v /var/run/docker.sock:/var/run/docker.sock \
     --network=host \
     kodiak-build

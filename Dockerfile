@@ -35,4 +35,4 @@ COPY ./src/ /kodiak/src/
 
 RUN /kodiak/scripts/create-test-config.sh
 
-CMD ./gradlew test :distDocker
+CMD ./gradlew test :distDocker -i
