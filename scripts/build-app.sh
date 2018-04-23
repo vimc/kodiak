@@ -16,7 +16,6 @@ docker build --tag kodiak-build \
 
 # Run the created image
 docker run \
-    -it \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -v $docker_auth_path:/root/.docker/config.json \
     --network=host \
