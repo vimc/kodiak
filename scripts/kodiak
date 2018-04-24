@@ -5,7 +5,7 @@ kodiak_version=$(git rev-parse --short=7 HEAD)
 registry=docker.montagu.dide.ic.ac.uk:5000
 kodiak_image=${registry}/kodiak:${kodiak_version}
 
-#cdocker pull ${kodiak_image}
+docker pull ${kodiak_image}
 
 docker run \
     --rm \
