@@ -1,8 +1,11 @@
 package org.vaccineimpact.kodiak
 
+import org.slf4j.LoggerFactory
+
 fun main(args: Array<String>) {
 
     val config = Config()
+    Kodiak().init()
     println("Available targets: ${config.targets.map{ it.id }}")
 
     val allowedModes = arrayOf("backup", "restore", "init")
@@ -23,4 +26,12 @@ fun main(args: Array<String>) {
     }
 
     println("TODO: ${args[0]}")
+}
+
+class Kodiak {
+    private val logger = LoggerFactory.getLogger(Kodiak::class.java)
+
+    fun init() {
+        logger.debug("Hello world")
+    }
 }

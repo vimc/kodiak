@@ -32,7 +32,6 @@ RUN ./gradlew
 
 # Copy source
 COPY ./src/ /kodiak/src/
-
 RUN /kodiak/scripts/create-test-config.sh
 
 ARG git_id='UNKNOWN'
@@ -45,6 +44,6 @@ ENV APP_DOCKER_TAG $registry/$name
 ENV APP_DOCKER_COMMIT_TAG $registry/$name:$git_id
 ENV APP_DOCKER_BRANCH_TAG $registry/$name:$git_branch
 
-CMD ./gradlew test :distDocker -i -Pdocker_version=$GIT_ID -Pdocker_name=$APP_DOCKER_TAG \
+CMD ./gradlew test :distDocker -i -Pin_container=true -Pdocker_version=$GIT_ID -Pdocker_name=$APP_DOCKER_TAG \
      && docker tag $APP_DOCKER_COMMIT_TAG $APP_DOCKER_BRANCH_TAG \
      && docker push $APP_DOCKER_BRANCH_TAG
