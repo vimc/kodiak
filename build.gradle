@@ -63,3 +63,26 @@ distDocker {
     tag = kodiak_docker_name
     tagVersion = kodiak_docker_version
 }
+
+def dev = true
+if (hasProperty('in_container')) {
+    dev = false
+}
+
+task copyDockerProperties(type: Copy) {
+    from 'src/main/resources/docker'
+    into 'src/main/resources'
+    outputs.upToDateWhen { false }
+}
+
+task copyDevProperties(type: Copy) {
+    from 'src/main/resources/dev'
+    into 'src/main/resources'
+    outputs.upToDateWhen { false }
+}
+
+if (dev) {
+    processResources.dependsOn copyDevProperties
+} else {
+    processResources.dependsOn copyDockerProperties
+}

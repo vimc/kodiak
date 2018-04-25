@@ -5,6 +5,8 @@ import java.io.FileNotFoundException
 import java.io.InputStreamReader
 import com.google.gson.reflect.TypeToken
 import java.io.File
+import java.net.URL
+import java.util.*
 
 
 interface Config {
@@ -18,9 +20,9 @@ data class Target(val id: String,
                   val remoteBucket: String,
                   val localPath: String)
 
-class JsonConfig(configPath: String = "/etc/kodiak/config.json") : Config {
+class JsonConfig(configPath: String) : Config {
 
-    private val properties: JsonObject
+    private val kodiakConfig: JsonObject
     private val gson = GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .create()
@@ -31,13 +33,14 @@ class JsonConfig(configPath: String = "/etc/kodiak/config.json") : Config {
         if (!file.exists()) {
             throw FileNotFoundException("No config found at $configPath")
         }
-        properties = JsonParser()
+
+        kodiakConfig = JsonParser()
                 .parse(InputStreamReader(file.inputStream()))
                 .asJsonObject
     }
 
     private operator fun get(key: String): JsonElement {
-        val x = properties[key]
+        val x = kodiakConfig[key]
         if (x != null) {
             return x
         } else {

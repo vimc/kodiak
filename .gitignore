@@ -3,3 +3,4 @@
 build/*
 out/*
 kodiak.iml
+src/main/resources/log4j.properties

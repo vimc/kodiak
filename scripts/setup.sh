@@ -22,8 +22,7 @@ docker run \
 docker cp "$config_path" helper:/data
 docker rm helper
 
-# Now build the kodiak container
-${HERE}/build-app.sh
+docker volume create kodiak_logs
 
 # Rewrite the config to only the chosen targets
 ${HERE}/kodiak init $targets

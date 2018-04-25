@@ -1,20 +1,12 @@
 package org.vaccineimpact.kodiak.tests
 
 import org.assertj.core.api.Assertions.*
-import org.junit.Rule
 import org.junit.Test
 import org.vaccineimpact.kodiak.Config
 import org.vaccineimpact.kodiak.JsonConfig
 
 
-class ConfigTests {
-
-    @get:Rule
-    val teamCityIntegration = TeamCityIntegration()
-
-    private val testConfigPath = ConfigTests::class.java.classLoader
-            .getResource("testconfig.json")
-            .path
+class ConfigTests: BaseTests() {
 
     private val sut: Config = JsonConfig(testConfigPath)
 

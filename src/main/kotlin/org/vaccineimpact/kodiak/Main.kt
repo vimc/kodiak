@@ -1,25 +1,48 @@
 package org.vaccineimpact.kodiak
 
 import org.docopt.Docopt
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
-val logger = LoggerFactory.getLogger(Kodiak::class.java)!!
+import java.io.FileNotFoundException
+import java.net.URL
+import java.util.*
 
 private val doc = (
                 "Usage:\n"
-                + "  kodiak init\n"
+                + "  kodiak init [TARGET...]\n"
                 + "  kodiak backup\n"
                 + "  kodiak restore")
+
+
+private fun getResource(path: String): URL
+{
+    val url: URL? = Config::class.java.classLoader.getResource(path)
+    if (url != null)
+    {
+        return url
+    }
+    else
+    {
+        throw FileNotFoundException("Unable to load '$path' as a resource steam")
+    }
+}
 
 fun main(args: Array<String>) {
 
     val opts = Docopt(doc)
             .parse(args.toList())
 
-    val kodiak = Kodiak(args.drop(1))
+    val properties = Properties().apply {
+        load(getResource("config.properties").openStream())
+    }
+
+    val configPath = properties["config_location"].toString()
+
+    val kodiak = Kodiak(JsonConfig(configPath))
 
     if (opts["init"] as Boolean){
-        kodiak.init()
+        @Suppress("UNCHECKED_CAST")
+        kodiak.init(opts["TARGET"] as ArrayList<String>)
     }
     if (opts["backup"] as Boolean){
         kodiak.backup()
@@ -29,20 +52,30 @@ fun main(args: Array<String>) {
     }
 }
 
-class Kodiak(private val targets: List<String>,
-             private val config: Config = JsonConfig()) {
+class Kodiak(private val config: Config,
+             private val logger: Logger = LoggerFactory.getLogger(Kodiak::class.java)) {
 
-    private fun requireTargets() {
-        if (targets.any()) {
+    private fun requireTargets(targets: ArrayList<String>) {
+        if (!targets.any()) {
             logger.info("Please provide at least one target")
             logger.info("Available targets: ${config.targets.map{ it.id }}")
 
             return
         }
 
-        val targets = args.drop(1)
-        println("Chosen targets: ${targets.map{ it }}")
+        logger.info("Chosen targets: ${targets.map{ it }}")
     }
 
-    println("TODO: ${args[0]}")
+    fun init(targets: ArrayList<String>) {
+        logger.info("init")
+        requireTargets(targets)
+    }
+
+    fun backup() {
+        logger.info("backup")
+    }
+
+    fun restore() {
+        logger.info("restore")
+    }
 }

@@ -1,0 +1,12 @@
+{
+  "starport_path": "/test/starport",
+  "working_path": "/test/kodiak",
+  "targets": [
+    {
+      "id": "test",
+      "encrypted": true,
+      "remote_bucket": "testbucket",
+      "local_path": "testtarget"
+    }
+  ]
+}
