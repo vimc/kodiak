@@ -5,4 +5,4 @@ out/*
 kodiak.iml
 src/main/resources/log4j.properties
 src/main/resources/config.json
-src/main/resources/config.properties
+
