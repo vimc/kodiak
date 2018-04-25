@@ -18,7 +18,7 @@ class Kodiak(private val config: KodiakConfig,
 
     fun main(args: Array<String>) {
         if (args.isEmpty() || !allowedModes.contains(args[0])) {
-            logger.info("Please provide a command-line argument of either 'backup', 'restore' or 'init")
+            logger.info("Please provide a command-line argument of either 'backup', 'restore' or 'init'")
             return
         }
 

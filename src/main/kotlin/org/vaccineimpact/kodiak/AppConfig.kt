@@ -4,7 +4,7 @@ import java.io.File
 import java.io.InputStream
 import java.util.*
 
-object DefaultConfig: AppConfig {
+object DefaultConfig : AppConfig {
 
     private val properties = Properties().apply {
         load(AppConfig::class.java.classLoader.getResource("config.properties")
@@ -20,13 +20,13 @@ object DefaultConfig: AppConfig {
         }
     }
 
-    val dev = this["dev"].toBoolean()
+    val prod = System.getProperty("prod", "false").toBoolean()
 
-    override val kodiakConfigStream: InputStream = if (dev) {
+    override val kodiakConfigStream: InputStream = if (prod) {
+        File("/etc/kodiak/config.json").inputStream()
+    } else {
         DefaultConfig::class.java.classLoader.getResource("config.json")
                 .openStream()
-    } else {
-        File("/etc/kodiak/config.json").inputStream()
     }
 
 }
