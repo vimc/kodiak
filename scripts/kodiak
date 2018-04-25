@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -e
+
+docker run \
+    --rm \
+    -v kodiak_config:/etc/kodiak/ \
+    kodiak "$@"
