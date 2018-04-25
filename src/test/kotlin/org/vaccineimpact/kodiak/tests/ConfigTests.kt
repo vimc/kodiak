@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions.*
 import org.junit.Rule
 import org.junit.Test
 import org.vaccineimpact.kodiak.Config
+import org.vaccineimpact.kodiak.JsonConfig
 
 
 class ConfigTests {
@@ -11,7 +12,11 @@ class ConfigTests {
     @get:Rule
     val teamCityIntegration = TeamCityIntegration()
 
-    val sut = Config("/etc/kodiak/testconfig.json")
+    private val testConfigPath = ConfigTests::class.java.classLoader
+            .getResource("testconfig.json")
+            .path
+
+    private val sut: Config = JsonConfig(testConfigPath)
 
     @Test
     fun canParseStarportPath() {

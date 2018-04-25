@@ -7,7 +7,7 @@ import com.google.gson.reflect.TypeToken
 import java.io.File
 
 
-interface ConfigWrapper {
+interface Config {
     val starportPath: String;
     val workingPath: String;
     val targets: List<Target>
@@ -18,7 +18,7 @@ data class Target(val id: String,
                   val remoteBucket: String,
                   val localPath: String)
 
-class Config(configPath: String = "/etc/kodiak/config.json") : ConfigWrapper {
+class JsonConfig(configPath: String = "/etc/kodiak/config.json") : Config {
 
     private val properties: JsonObject
     private val gson = GsonBuilder()
