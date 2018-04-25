@@ -36,7 +36,7 @@ class JsonConfig(configPath: String = "/etc/kodiak/config.json") : Config {
                 .asJsonObject
     }
 
-    private fun get(key: String): JsonElement {
+    private operator fun get(key: String): JsonElement {
         val x = properties[key]
         if (x != null) {
             return x
@@ -45,11 +45,11 @@ class JsonConfig(configPath: String = "/etc/kodiak/config.json") : Config {
         }
     }
 
-    override val starportPath: String = this.get("starport_path").asString
-    override val workingPath: String = this.get("working_path").asString
+    override val starportPath: String = this["starport_path"].asString
+    override val workingPath: String = this["working_path"].asString
 
     override val targets: List<Target> = gson
-            .fromJson<List<Target>>(this.get("targets"), object : TypeToken<List<Target>>() {}.type)
+            .fromJson<List<Target>>(this["targets"], object : TypeToken<List<Target>>() {}.type)
             .map { it.copy(localPath = "${this.starportPath}/${it.localPath}") }
 
 }
