@@ -7,7 +7,7 @@ import com.google.gson.reflect.TypeToken
 import java.io.File
 
 
-interface ConfigWrapper {
+interface Config {
     val starportPath: String;
     val workingPath: String;
     val targets: List<Target>
@@ -18,7 +18,7 @@ data class Target(val id: String,
                   val remoteBucket: String,
                   val localPath: String)
 
-class Config(configPath: String = "/etc/kodiak/config.json") : ConfigWrapper {
+class JsonConfig(configPath: String = "/etc/kodiak/config.json") : Config {
 
     private val properties: JsonObject
     private val gson = GsonBuilder()
@@ -36,7 +36,7 @@ class Config(configPath: String = "/etc/kodiak/config.json") : ConfigWrapper {
                 .asJsonObject
     }
 
-    private fun get(key: String): JsonElement {
+    private operator fun get(key: String): JsonElement {
         val x = properties[key]
         if (x != null) {
             return x
@@ -45,11 +45,11 @@ class Config(configPath: String = "/etc/kodiak/config.json") : ConfigWrapper {
         }
     }
 
-    override val starportPath: String = this.get("starport_path").asString
-    override val workingPath: String = this.get("working_path").asString
+    override val starportPath: String = this["starport_path"].asString
+    override val workingPath: String = this["working_path"].asString
 
     override val targets: List<Target> = gson
-            .fromJson<List<Target>>(this.get("targets"), object : TypeToken<List<Target>>() {}.type)
+            .fromJson<List<Target>>(this["targets"], object : TypeToken<List<Target>>() {}.type)
             .map { it.copy(localPath = "${this.starportPath}/${it.localPath}") }
 
 }
