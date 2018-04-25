@@ -5,7 +5,7 @@ import org.slf4j.Logger
 
 fun main(args: Array<String>) {
 
-    val kodiakConfig = JsonConfig(DefaultConfig.kodiakConfigStream)
+    val kodiakConfig = AppConfig.kodiakConfig
     val kodiak = Kodiak(kodiakConfig)
 
     return kodiak.main(args)
