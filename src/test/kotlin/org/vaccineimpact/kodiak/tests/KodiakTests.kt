@@ -8,34 +8,33 @@ import org.junit.Test
 import org.slf4j.Logger
 import org.vaccineimpact.kodiak.JsonConfig
 import org.vaccineimpact.kodiak.Kodiak
-import org.vaccineimpact.kodiak.main
 
-class KodiakTests: BaseTests() {
+class KodiakTests : BaseTests() {
 
-    private var mockLogger = mock<Logger>()
-    private var sut = Kodiak(config = JsonConfig(testConfigPath), logger = mockLogger)
+    val config = JsonConfig(testConfig)
+    var mockLogger = mock<Logger>()
+    var sut: Kodiak = Kodiak(config, mockLogger)
 
     @Before
-    fun createSut(){
+    fun createSut() {
         mockLogger = mock<Logger>()
-        sut = Kodiak(config = JsonConfig(testConfigPath), logger = mockLogger)
+        sut = Kodiak(config, mockLogger)
     }
 
     @Test
-    fun callsBackup() {
+    fun requiresTargetsForInit() {
 
-        main(arrayOf("backup"))
-    }
-
-    @Test
-    fun requiresTargetsOnInit() {
-
-        sut.init(arrayListOf("t1"))
-        verify(mockLogger, never()).info("Please provide at least one target")
-
-        sut.init(arrayListOf())
+        sut.init(listOf())
         verify(mockLogger).info("Please provide at least one target")
-
+        verify(mockLogger).info("Available targets: t1")
     }
 
+    @Test
+    fun logsChosenTargetsOnInit() {
+
+        sut.init(listOf("t1", "t2"))
+        verify(mockLogger, never()).info("Please provide at least one target")
+        verify(mockLogger).info("init")
+        verify(mockLogger).info("Chosen targets: t1, t2")
+    }
 }

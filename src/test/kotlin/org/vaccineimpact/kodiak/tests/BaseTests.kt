@@ -4,11 +4,10 @@ import org.junit.Rule
 
 abstract class BaseTests {
 
-    protected val testConfigPath = ConfigTests::class.java.classLoader
-            .getResource("testconfig.json")
-            .path
-
     @get:Rule
     val teamCityIntegration = TeamCityIntegration()
 
+    protected val testConfig = ConfigTests::class.java.classLoader
+            .getResource("testconfig.json")
+            .openStream()
 }
