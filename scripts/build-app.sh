@@ -18,5 +18,4 @@ docker build --tag kodiak-build \
 docker run \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -v $docker_auth_path:/root/.docker/config.json \
-    --network=host \
     kodiak-build
