@@ -97,7 +97,7 @@ task runAppLocally(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 
     main = mainClassName
-    if ( project.hasProperty("commandLineArgs") ) {
+    if (project.hasProperty("commandLineArgs") ) {
         args Eval.me(setCommandLineArguments(commandLineArgs))
     }
 }
