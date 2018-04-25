@@ -26,13 +26,10 @@ RUN ./gradlew
 
 # Pull in dependencies
 COPY ./build.gradle /kodiak/
-COPY ./config/ /kodiak/config/
-COPY ./scripts/ /kodiak/scripts/
 RUN ./gradlew
 
 # Copy source
 COPY ./src/ /kodiak/src/
-RUN /kodiak/scripts/create-test-config.sh
 
 ARG git_id='UNKNOWN'
 ARG git_branch='UNKNOWN'

@@ -26,7 +26,7 @@ fun main(args: Array<String>) {
 }
 
 class Kodiak(private val targets: List<String>,
-             private val config: Config = Config()) {
+             private val config: Config = JsonConfig()) {
 
     private fun requireTargets() {
         if (targets.any()) {
