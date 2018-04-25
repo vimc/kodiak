@@ -1,56 +1,59 @@
 package org.vaccineimpact.kodiak
 
 import org.slf4j.LoggerFactory
-
-val logger = LoggerFactory.getLogger(Kodiak::class.java)!!
+import org.slf4j.Logger
 
 fun main(args: Array<String>) {
 
-    val allowedModes = arrayOf("backup", "restore", "init")
+    val kodiakConfig = JsonConfig(DefaultConfig.kodiakConfigStream)
+    val kodiak = Kodiak(kodiakConfig)
 
-    if (args.isEmpty() || !allowedModes.contains(args[0])) {
-        logger.info("Please provide a command-line argument of either 'backup', 'restore' or 'init")
-        return
-    }
-
-    val kodiak = Kodiak(args.drop(1))
-    if (args[0] == "init"){
-        kodiak.init()
-    }
-    if (args[0] == "backup"){
-        kodiak.backup()
-    }
-    if (args[0] == "restore"){
-        kodiak.restore()
-    }
+    return kodiak.main(args)
 }
 
-class Kodiak(private val targets: List<String>,
-             private val config: Config = JsonConfig()) {
+class Kodiak(private val config: KodiakConfig,
+             private val logger: Logger = LoggerFactory.getLogger(Kodiak::class.java)) {
 
-    private fun requireTargets() {
-        if (targets.any()) {
+    private val allowedModes = arrayOf("backup", "restore", "init")
+
+    fun main(args: Array<String>) {
+        if (args.isEmpty() || !allowedModes.contains(args[0])) {
+            logger.info("Please provide a command-line argument of either 'backup', 'restore' or 'init")
+            return
+        }
+
+        if (args[0] == "init"){
+            init(args.drop(1))
+        }
+        if (args[0] == "backup"){
+            backup()
+        }
+        if (args[0] == "restore"){
+            restore()
+        }
+    }
+
+    private fun requireTargets(targets: List<String>) {
+        if (!targets.any()) {
             logger.info("Please provide at least one target")
-            logger.info("Available targets: ${config.targets.map{ it.id }}")
+            logger.info("Available targets: ${config.targets.joinToString{ it.id }}")
 
             return
         }
 
-        println("Chosen targets: ${targets.map{ it }}")
+        logger.info("Chosen targets: ${targets.joinToString{ it }}")
     }
 
-    fun init() {
+    fun init(targets: List<String>) {
         logger.info("init")
-        requireTargets()
+        requireTargets(targets)
     }
 
     fun backup() {
         logger.info("backup")
-        requireTargets()
     }
 
     fun restore() {
         logger.info("restore")
-        requireTargets()
     }
 }

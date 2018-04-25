@@ -3,7 +3,7 @@
   "working_path": "/test/kodiak",
   "targets": [
     {
-      "id": "t1",
+      "id": "test",
       "encrypted": true,
       "remote_bucket": "testbucket",
       "local_path": "testtarget"

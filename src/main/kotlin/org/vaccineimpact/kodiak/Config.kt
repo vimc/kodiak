@@ -1,13 +1,11 @@
 package org.vaccineimpact.kodiak
 
 import com.google.gson.*
-import java.io.FileNotFoundException
-import java.io.InputStreamReader
 import com.google.gson.reflect.TypeToken
-import java.io.File
+import java.io.InputStream
+import java.io.InputStreamReader
 
-
-interface Config {
+interface KodiakConfig {
     val starportPath: String;
     val workingPath: String;
     val targets: List<Target>
@@ -18,23 +16,15 @@ data class Target(val id: String,
                   val remoteBucket: String,
                   val localPath: String)
 
-class JsonConfig(configPath: String = "/etc/kodiak/config.json") : Config {
+class JsonConfig(inputStream: InputStream) : KodiakConfig {
 
-    private val properties: JsonObject
+    private val properties: JsonObject = JsonParser()
+            .parse(InputStreamReader(inputStream))
+            .asJsonObject
+
     private val gson = GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .create()
-
-    init {
-
-        val file = File(configPath)
-        if (!file.exists()) {
-            throw FileNotFoundException("No config found at $configPath")
-        }
-        properties = JsonParser()
-                .parse(InputStreamReader(file.inputStream()))
-                .asJsonObject
-    }
 
     private operator fun get(key: String): JsonElement {
         val x = properties[key]
