@@ -30,7 +30,7 @@ class KodiakTests: BaseTests() {
     @Test
     fun requiresTargetsOnInit() {
 
-        sut.init(arrayListOf())
+        sut.init(arrayListOf("t1"))
         verify(mockLogger, never()).info("Please provide at least one target")
 
         sut.init(arrayListOf())

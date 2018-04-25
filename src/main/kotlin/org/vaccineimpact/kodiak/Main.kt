@@ -3,6 +3,7 @@ package org.vaccineimpact.kodiak
 import org.docopt.Docopt
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.io.File
 import java.io.FileNotFoundException
 import java.net.URL
 import java.util.*
@@ -36,7 +37,14 @@ fun main(args: Array<String>) {
         load(getResource("config.properties").openStream())
     }
 
-    val configPath = properties["config_location"].toString()
+    var configPath = properties["config_location"].toString()
+
+    val file = File(configPath)
+    if (!file.isAbsolute)
+    {
+        configPath = Kodiak::class.java.classLoader
+                .getResource("config.json").path
+    }
 
     val kodiak = Kodiak(JsonConfig(configPath))
 
