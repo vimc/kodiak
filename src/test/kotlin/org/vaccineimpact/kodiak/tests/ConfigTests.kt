@@ -3,12 +3,12 @@ package org.vaccineimpact.kodiak.tests
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.vaccineimpact.kodiak.JsonConfig
-import org.vaccineimpact.kodiak.KodiakConfig
+import org.vaccineimpact.kodiak.Config
 
 
 class ConfigTests : BaseTests() {
 
-    private val sut: KodiakConfig = JsonConfig(testConfig)
+    private val sut: Config = JsonConfig(testConfigSource)
 
     @Test
     fun canParseStarportPath() {
