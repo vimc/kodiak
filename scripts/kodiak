@@ -2,10 +2,8 @@
 set -e
 
 kodiak_version=$(git rev-parse --short=7 HEAD)
-registry=docker.montagu.dide.ic.ac.uk:5000
+registry=vimc
 kodiak_image=${registry}/kodiak:${kodiak_version}
-
-#docker pull ${kodiak_image}
 
 docker run \
     --rm \

@@ -11,7 +11,7 @@ import org.vaccineimpact.kodiak.Kodiak
 
 class KodiakTests : BaseTests() {
 
-    val config = JsonConfig(testConfig)
+    val config = JsonConfig(testConfigSource)
     var mockLogger = mock<Logger>()
     var sut: Kodiak = Kodiak(config, mockLogger)
 

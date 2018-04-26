@@ -16,13 +16,13 @@ fun main(args: Array<String>) {
     val opts = Docopt(doc)
             .parse(args.toList())
 
-    val kodiakConfig = AppConfig.kodiakConfig
-    val kodiak = Kodiak(kodiakConfig)
+    val config = JsonConfig(EnvironmentProperties.configSource)
+    val kodiak = Kodiak(config)
 
     return kodiak.main(opts)
 }
 
-class Kodiak(private val config: KodiakConfig,
+class Kodiak(private val config: Config,
              private val logger: Logger = LoggerFactory.getLogger(Kodiak::class.java)) {
 
     fun main(opts: MutableMap<String, Any>) {

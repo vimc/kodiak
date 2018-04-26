@@ -7,7 +7,7 @@ abstract class BaseTests {
     @get:Rule
     val teamCityIntegration = TeamCityIntegration()
 
-    protected val testConfig = ConfigTests::class.java.classLoader
+    protected val testConfigSource = ConfigTests::class.java.classLoader
             .getResource("testconfig.json")
             .openStream()
 }

@@ -1,4 +1,5 @@
-FROM openjdk
+ARG libsodium_image='docker.montagu.dide.ic.ac.uk:5000/openjdk-libsodium:master'
+FROM $libsodium_image
 
 # Install docker
 RUN apt-get update
@@ -33,7 +34,7 @@ COPY ./src/ /kodiak/src/
 
 ARG git_id='UNKNOWN'
 ARG git_branch='UNKNOWN'
-ARG registry=docker.montagu.dide.ic.ac.uk:5000
+ARG registry=vimc
 ARG name=kodiak
 
 ENV GIT_ID $git_id

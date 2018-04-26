@@ -5,7 +5,7 @@ import com.google.gson.reflect.TypeToken
 import java.io.InputStream
 import java.io.InputStreamReader
 
-interface KodiakConfig {
+interface Config {
     val starportPath: String;
     val workingPath: String;
     val targets: List<Target>
@@ -16,7 +16,7 @@ data class Target(val id: String,
                   val remoteBucket: String,
                   val localPath: String)
 
-class JsonConfig(inputStream: InputStream) : KodiakConfig {
+class JsonConfig(inputStream: InputStream) : Config {
 
     private val properties: JsonObject = JsonParser()
             .parse(InputStreamReader(inputStream))
