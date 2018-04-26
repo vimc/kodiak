@@ -22,6 +22,11 @@ if (hasProperty('docker_name')) {
     kodiak_docker_name = docker_name
 }
 
+def base_image = 'docker.montagu.dide.ic.ac.uk:5000/openjdk-libsodium:master'
+if (hasProperty('libsodium_image')) {
+    base_image = libsodium_image
+}
+
 apply plugin: 'kotlin'
 apply plugin: 'application'
 apply plugin: 'docker'
@@ -56,7 +61,7 @@ compileTestKotlin {
 }
 
 distDocker {
-    baseImage = "openjdk"
+    baseImage = base_image
     dependsOn = [build]
     push = true
     tag = kodiak_docker_name
