@@ -10,5 +10,4 @@ docker pull ${kodiak_image}
 docker run \
     --rm \
     -v kodiak_config:/etc/kodiak/ \
-    --network=host \
     ${kodiak_image} "$@"
