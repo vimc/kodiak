@@ -1,14 +1,11 @@
 package org.vaccineimpact.kodiak
 
-import java.io.File
-import java.io.InputStream
+class EnvironmentProperties {
 
-object EnvironmentProperties {
+    val production = System.getProperty("production", "false").toBoolean()
 
-    val prod = System.getProperty("production", "false").toBoolean()
-
-    val configSource: String = if (prod) {
-        File("/etc/kodiak/config.json").path
+    val configSource: String = if (production) {
+        "/etc/kodiak/config.json"
     } else {
         EnvironmentProperties::class.java.classLoader
                 .getResource("config.json")
