@@ -5,12 +5,13 @@ import java.io.InputStream
 
 object EnvironmentProperties {
 
-    val prod = System.getProperty("prod", "false").toBoolean()
+    val prod = System.getProperty("production", "false").toBoolean()
 
-    val configSource: InputStream = if (prod) {
-        File("/etc/kodiak/config.json").inputStream()
+    val configSource: String = if (prod) {
+        File("/etc/kodiak/config.json").path
     } else {
-        EnvironmentProperties::class.java.classLoader.getResource("config.json")
-                .openStream()
+        EnvironmentProperties::class.java.classLoader
+                .getResource("config.json")
+                .path
     }
 }

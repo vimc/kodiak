@@ -2,8 +2,7 @@ package org.vaccineimpact.kodiak
 
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken
-import java.io.InputStream
-import java.io.InputStreamReader
+import java.io.File
 
 interface Config {
     val starportPath: String;
@@ -16,10 +15,10 @@ data class Target(val id: String,
                   val remoteBucket: String,
                   val localPath: String)
 
-class JsonConfig(inputStream: InputStream) : Config {
+class JsonConfig(configPath: String) : Config {
 
     private val properties: JsonObject = JsonParser()
-            .parse(InputStreamReader(inputStream))
+            .parse(File(configPath).readText())
             .asJsonObject
 
     private val gson = GsonBuilder()
