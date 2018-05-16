@@ -1,19 +1,14 @@
 package org.vaccineimpact.kodiak
 
-import org.slf4j.LoggerFactory
+object EnvironmentProperties {
 
-class EnvironmentProperties {
+    var production = System.getenv("production") != null
 
-    var configSource: String = "/etc/kodiak/config.json"
-
-    init {
-        val dev = System.getProperty("dev", "false").toBoolean()
-        LoggerFactory.getLogger(EnvironmentProperties::class.java)
-                .info(System.getenv("production"))
-        if (dev) {
-            configSource = EnvironmentProperties::class.java.classLoader
-                    .getResource("config.json")
-                    .path
-        }
+    var configSource: String = if (production) {
+        "/etc/kodiak/config.json"
+    } else {
+        EnvironmentProperties::class.java.classLoader
+                .getResource("config.json")
+                .path
     }
 }
