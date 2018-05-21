@@ -1,22 +1,14 @@
 package org.vaccineimpact.kodiak.tests
 
-import org.assertj.core.api.Assertions.*
-import org.junit.Rule
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import org.vaccineimpact.kodiak.Config
 import org.vaccineimpact.kodiak.JsonConfig
+import org.vaccineimpact.kodiak.Config
 
 
-class ConfigTests {
+class ConfigTests : BaseTests() {
 
-    @get:Rule
-    val teamCityIntegration = TeamCityIntegration()
-
-    private val testConfigPath = ConfigTests::class.java.classLoader
-            .getResource("testconfig.json")
-            .path
-
-    private val sut: Config = JsonConfig(testConfigPath)
+    private val sut: Config = JsonConfig(testConfigSource)
 
     @Test
     fun canParseStarportPath() {
@@ -36,7 +28,7 @@ class ConfigTests {
 
         val target = targets[0]
 
-        assertThat(target.id).isEqualTo("test")
+        assertThat(target.id).isEqualTo("t1")
         assertThat(target.encrypted).isTrue()
         assertThat(target.localPath).isEqualTo("/test/starport/testtarget")
         assertThat(target.remoteBucket).isEqualTo("testbucket")

@@ -8,4 +8,5 @@ kodiak_image=${registry}/kodiak:${kodiak_version}
 docker run \
     --rm \
     -v kodiak_config:/etc/kodiak/ \
+    -v kodiak_logs:/var/log/kodiak \
     ${kodiak_image} "$@"

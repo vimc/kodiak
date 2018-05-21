@@ -16,11 +16,13 @@ docker volume create kodiak_config
 
 docker run \
     -v kodiak_config:/data \
-    --name helper \
-    alpine
+    --name kodiak_helper \
+    alpine /bin/sh
 
-docker cp "$config_path" helper:/data
-docker rm helper
+docker cp "$config_path" kodiak_helper:/data
+docker rm kodiak_helper
+
+docker volume create kodiak_logs
 
 # Rewrite the config to only the chosen targets
 ${HERE}/kodiak init $targets
