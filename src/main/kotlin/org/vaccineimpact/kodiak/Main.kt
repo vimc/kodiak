@@ -25,7 +25,7 @@ fun main(args: Array<String>) {
 class Kodiak(private val config: Config,
              private val logger: Logger = LoggerFactory.getLogger(Kodiak::class.java)) {
 
-    fun main(opts: MutableMap<String, Any>) {
+    fun main(opts: Map<String, Any>) {
 
         if (opts["init"] as Boolean){
             @Suppress("UNCHECKED_CAST")
