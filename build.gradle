@@ -62,6 +62,9 @@ compileTestKotlin {
 }
 
 distDocker {
+
+    setEnvironment("production", "true")
+
     baseImage = base_image
     dependsOn = [build]
     push = true
@@ -81,21 +84,10 @@ task copyDevProperties(type: Copy) {
     outputs.upToDateWhen { false }
 }
 
-if (System.getProperty("prod")) {
+if (System.getProperty("production")) {
     processResources.dependsOn copyDockerProperties
 } else {
     processResources.dependsOn copyDevProperties
-}
-
-// this method creates a string that can be used by Eval
-static def setCommandLineArguments(commandLineArgs) {
-
-    def arguments = commandLineArgs.tokenize()
-    def cla = "["
-    arguments.each {
-        cla += "'" + "${it}" + "',"
-    }
-    return cla.substring(0, cla.lastIndexOf(',')) + "]"
 }
 
 // usage: ./gradlew runAppLocally -PcommandLineArgs="init target1"
@@ -103,7 +95,7 @@ task runAppLocally(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 
     main = mainClassName
-    if (project.hasProperty("commandLineArgs") ) {
-        args Eval.me(setCommandLineArguments(commandLineArgs))
+    if (project.hasProperty("commandLineArgs")) {
+        args commandLineArgs.tokenize()
     }
 }

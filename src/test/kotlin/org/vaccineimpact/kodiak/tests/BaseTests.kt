@@ -9,5 +9,5 @@ abstract class BaseTests {
 
     protected val testConfigSource = ConfigTests::class.java.classLoader
             .getResource("testconfig.json")
-            .openStream()
+            .path
 }
