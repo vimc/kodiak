@@ -12,6 +12,7 @@ interface Config {
     val awsId: String
     val awsSecret: String
     val encryptionKey: String
+    val vaultAddress: String
 }
 
 data class Target(val id: String,
@@ -24,7 +25,8 @@ data class FinalConfig(override val starportPath: String,
                        override val targets: List<Target>,
                        override val awsId: String,
                        override val awsSecret: String,
-                       override val encryptionKey: String) : Config
+                       override val encryptionKey: String,
+                       override val vaultAddress: String) : Config
 
 class JsonConfig(private val configPath: String) : Config {
 
@@ -51,7 +53,8 @@ class JsonConfig(private val configPath: String) : Config {
                 this.targets,
                 this.awsId,
                 this.awsSecret,
-                this.encryptionKey)
+                this.encryptionKey,
+                this.vaultAddress)
     }
 
     fun save(filteredTargets: List<Target>, encryptionKey: String) {
@@ -66,6 +69,7 @@ class JsonConfig(private val configPath: String) : Config {
                 .asJsonObject
     }
 
+    override val vaultAddress: String = this["vault_address"].asString
     override val starportPath: String = this["starport_path"].asString
     override val workingPath: String = this["working_path"].asString
     override val awsId: String = this["aws_id"].asString
