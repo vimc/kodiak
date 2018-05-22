@@ -17,12 +17,13 @@ fun main(args: Array<String>) {
             .parse(args.toList())
 
     val config = JsonConfig(EnvironmentProperties.configSource)
-    val kodiak = Kodiak(config)
+    val kodiak = Kodiak(config, SodiumEncryption.instance)
 
     return kodiak.main(opts)
 }
 
 class Kodiak(private val config: JsonConfig,
+             private val encryption: Encryption,
              private val logger: Logger = LoggerFactory.getLogger(Kodiak::class.java)) {
 
     fun main(opts: Map<String, Any>) {
@@ -55,12 +56,14 @@ class Kodiak(private val config: JsonConfig,
         requireTargets(targets)
 
         val filteredTargets = config.targets.filter({ targets.contains(it.id) })
-        config.save(filteredTargets)
+        val encryptionKey = encryption.generateEncryptionKey()
+        config.save(filteredTargets, encryptionKey)
     }
 
     fun backup() {
         logger.info("backup")
     }
+
 
     fun restore() {
         logger.info("restore")

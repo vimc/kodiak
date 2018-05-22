@@ -1,5 +1,6 @@
 package org.vaccineimpact.kodiak.tests
 
+import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.verify
@@ -9,17 +10,19 @@ import org.slf4j.Logger
 import org.vaccineimpact.kodiak.JsonConfig
 import org.vaccineimpact.kodiak.Kodiak
 import org.assertj.core.api.Assertions.assertThat
+import org.vaccineimpact.kodiak.Encryption
 
 class KodiakTests : BaseTests() {
 
     val config = JsonConfig(testConfigSource)
     var mockLogger = mock<Logger>()
-    var sut: Kodiak = Kodiak(config, mockLogger)
+    val mockEncryption = mock<Encryption> { on { it.generateEncryptionKey() } doReturn "key" }
+    var sut: Kodiak = Kodiak(config, mockEncryption, mockLogger)
 
     @Before
     fun createSut() {
         mockLogger = mock<Logger>()
-        sut = Kodiak(config, mockLogger)
+        sut = Kodiak(config, mockEncryption, mockLogger)
     }
 
     @Test
@@ -65,6 +68,13 @@ class KodiakTests : BaseTests() {
         sut.init(arrayListOf("t1"))
         val newConfig = JsonConfig(testConfigSource)
         assertThat(newConfig.targets.count()).isEqualTo(1)
-        assertThat(newConfig.targets.all({it.id == "t1"})).isTrue()
+        assertThat(newConfig.targets.all({ it.id == "t1" })).isTrue()
+    }
+
+    @Test
+    fun createsEncryptionKey() {
+
+        sut.init(arrayListOf("t1"))
+        assertThat(config.encryptionKey.length).isGreaterThan(0)
     }
 }

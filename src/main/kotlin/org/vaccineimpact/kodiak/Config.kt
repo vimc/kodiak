@@ -2,6 +2,7 @@ package org.vaccineimpact.kodiak
 
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken
+import sun.security.krb5.EncryptionKey
 import java.io.File
 
 interface Config {
@@ -10,6 +11,7 @@ interface Config {
     val targets: List<Target>
     val awsId: String
     val awsSecret: String
+    val encryptionKey: String
 }
 
 data class Target(val id: String,
@@ -21,7 +23,8 @@ data class FinalConfig(override val starportPath: String,
                        override val workingPath: String,
                        override val targets: List<Target>,
                        override val awsId: String,
-                       override val awsSecret: String) : Config
+                       override val awsSecret: String,
+                       override val encryptionKey: String) : Config
 
 class JsonConfig(private val configPath: String) : Config {
 
@@ -43,11 +46,18 @@ class JsonConfig(private val configPath: String) : Config {
     }
 
     fun toFinalConfig(): FinalConfig {
-        return FinalConfig(this.starportPath, this.workingPath, this.targets, this.awsId, this.awsSecret)
+        return FinalConfig(this.starportPath,
+                this.workingPath,
+                this.targets,
+                this.awsId,
+                this.awsSecret,
+                this.encryptionKey)
     }
 
-    fun save(filteredTargets: List<Target>) {
-        val finalConfig = this.toFinalConfig().copy(targets = filteredTargets)
+    fun save(filteredTargets: List<Target>, encryptionKey: String) {
+        val finalConfig = this.toFinalConfig().copy(targets = filteredTargets,
+                encryptionKey = encryptionKey)
+
         File(this.configPath).writeText(this.gson.toJson(finalConfig))
 
         // update properties from file so that the targets get updated
@@ -60,11 +70,13 @@ class JsonConfig(private val configPath: String) : Config {
     override val workingPath: String = this["working_path"].asString
     override val awsId: String = this["aws_id"].asString
     override val awsSecret: String = this["aws_secret"].asString
+    override val encryptionKey: String
+            get() = this.properties["encryption_key"]?.asString ?: ""
 
     override val targets: List<Target>
-            get() = gson
-            .fromJson<List<Target>>(this["targets"], object : TypeToken<List<Target>>() {}.type)
-            .map { it.copy(localPath = "${this.starportPath}/${it.localPath}") }
+        get() = gson
+                .fromJson<List<Target>>(this["targets"], object : TypeToken<List<Target>>() {}.type)
+                .map { it.copy(localPath = "${this.starportPath}/${it.localPath}") }
 
 }
 
