@@ -44,7 +44,7 @@ class KodiakTests : BaseTests() {
     @Test
     fun requiresTargetsForInit() {
 
-        sut.init(listOf())
+        sut.init(arrayListOf())
         verify(mockLogger).info("Please provide at least one target")
         verify(mockLogger).info("Available targets: t1, t2")
     }
@@ -52,7 +52,7 @@ class KodiakTests : BaseTests() {
     @Test
     fun logsChosenTargetsOnInit() {
 
-        sut.init(listOf("t1", "t2"))
+        sut.init(arrayListOf("t1", "t2"))
         verify(mockLogger, never()).info("Please provide at least one target")
         verify(mockLogger).info("init")
         verify(mockLogger).info("Chosen targets: t1, t2")
@@ -62,7 +62,7 @@ class KodiakTests : BaseTests() {
     fun filtersTargetsOnInit() {
 
         assertThat(config.targets.count()).isEqualTo(2)
-        sut.init(listOf("t1"))
+        sut.init(arrayListOf("t1"))
         val newConfig = JsonConfig(testConfigSource)
         assertThat(newConfig.targets.count()).isEqualTo(1)
         assertThat(newConfig.targets.all({it.id == "t1"})).isTrue()
