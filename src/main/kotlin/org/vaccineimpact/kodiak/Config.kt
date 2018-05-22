@@ -25,7 +25,7 @@ data class FinalConfig(override val starportPath: String,
 
 class JsonConfig(private val configPath: String) : Config {
 
-    private val properties: JsonObject = JsonParser()
+    private var properties: JsonObject = JsonParser()
             .parse(File(configPath).readText())
             .asJsonObject
 
@@ -42,13 +42,18 @@ class JsonConfig(private val configPath: String) : Config {
         }
     }
 
-    private fun toFinalConfig(): FinalConfig {
+    fun toFinalConfig(): FinalConfig {
         return FinalConfig(this.starportPath, this.workingPath, this.targets, this.awsId, this.awsSecret)
     }
 
     fun save(filteredTargets: List<Target>) {
         val finalConfig = this.toFinalConfig().copy(targets = filteredTargets)
         File(this.configPath).writeText(this.gson.toJson(finalConfig))
+
+        // update properties from file so that the targets get updated
+        this.properties = JsonParser()
+                .parse(File(configPath).readText())
+                .asJsonObject
     }
 
     override val starportPath: String = this["starport_path"].asString
@@ -56,7 +61,8 @@ class JsonConfig(private val configPath: String) : Config {
     override val awsId: String = this["aws_id"].asString
     override val awsSecret: String = this["aws_secret"].asString
 
-    override val targets: List<Target> = gson
+    override val targets: List<Target>
+            get() = gson
             .fromJson<List<Target>>(this["targets"], object : TypeToken<List<Target>>() {}.type)
             .map { it.copy(localPath = "${this.starportPath}/${it.localPath}") }
 

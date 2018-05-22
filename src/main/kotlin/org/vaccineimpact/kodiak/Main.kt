@@ -50,7 +50,7 @@ class Kodiak(private val config: JsonConfig,
         logger.info("Chosen targets: ${targets.joinToString { it }}")
     }
 
-    fun init(targets: List<String>) {
+    fun init(targets: ArrayList<String>) {
         logger.info("init")
         requireTargets(targets)
 

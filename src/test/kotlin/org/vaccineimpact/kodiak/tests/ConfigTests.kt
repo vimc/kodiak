@@ -35,16 +35,19 @@ class ConfigTests : BaseTests() {
     @Test
     fun savesToFile() {
 
+        // confirm that we're starting with 2 targets
         assertThat(sut.targets.count()).isEqualTo(2)
-        val filteredTargets = sut.targets.filter({it.id == "t1"})
+
+        // setup: filter the targets
+        val filteredTargets = sut.targets.filter({ it.id == "t1" })
         sut.save(filteredTargets)
 
+        // test: should now only have 1 target
+        assertThat(sut.targets.count()).isEqualTo(1)
+
+        // test: a newly instantiated config from the same source file should have the same properties
         val newConfig = JsonConfig(testConfigSource)
-        assertThat(newConfig.targets.count()).isEqualTo(1)
-        assertThat(newConfig.starportPath).isEqualTo(sut.starportPath)
-        assertThat(newConfig.workingPath).isEqualTo(sut.workingPath)
-        assertThat(newConfig.awsId).isEqualTo(sut.awsId)
-        assertThat(newConfig.awsSecret).isEqualTo(sut.awsSecret)
+        assertThat(sut.toFinalConfig()).isEqualTo(newConfig.toFinalConfig())
     }
 
 }
