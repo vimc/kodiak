@@ -23,8 +23,7 @@ class VaultManager(token: String, config: Config) : SecretManager {
     private val kodiakPath = "secret/kodiak/"
 
     override fun read(name: String, key: String): String? {
-        return vault.logical().read(kodiakPath + name)
-                .data[key]
+        return vault.logical().read(kodiakPath + name)?.data?.get(key)
     }
 
     override fun write(name: String, key: String, value: String) {
