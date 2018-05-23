@@ -18,7 +18,7 @@ class SodiumEncryption: Encryption
     }
 
     companion object {
-        val random = SecureRandom.getInstanceStrong()
+        private val random = SecureRandom.getInstanceStrong()
         val instance = SodiumEncryption()
     }
 }
