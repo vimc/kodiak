@@ -14,13 +14,14 @@ import org.vaccineimpact.kodiak.Encryption
 
 class KodiakTests : BaseTests() {
 
-    val config = JsonConfig(testConfigSource)
+    var config = JsonConfig(testConfigSource)
     var mockLogger = mock<Logger>()
     val mockEncryption = mock<Encryption> { on { it.generateEncryptionKey() } doReturn "key" }
     var sut: Kodiak = Kodiak(config, mockEncryption, mockLogger)
 
     @Before
     fun createSut() {
+        config = JsonConfig(testConfigSource)
         mockLogger = mock<Logger>()
         sut = Kodiak(config, mockEncryption, mockLogger)
     }
@@ -48,6 +49,7 @@ class KodiakTests : BaseTests() {
     fun requiresTargetsForInit() {
 
         sut.init(arrayListOf())
+        verify(mockLogger).info("init")
         verify(mockLogger).info("Please provide at least one target")
         verify(mockLogger).info("Available targets: t1, t2")
     }
