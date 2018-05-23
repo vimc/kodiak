@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory
 
 val doc = (
         """Usage:
-        |  kodiak init (--vault-token=VAULT_TOKEN) [TARGET...]
+        |  kodiak init (--github-token=GITHUB_VAULT_TOKEN) [TARGET...]
         |  kodiak backup
         |  kodiak restore""".trimMargin())
 
@@ -19,7 +19,7 @@ class Kodiak(private val config: JsonConfig,
 
             @Suppress("UNCHECKED_CAST")
             val targets = opts["TARGET"] as ArrayList<String>
-            val vaultToken = opts["--vault-token"] as String
+            val vaultToken = opts["--github-token"] as String
 
             val vaultManager = VaultManager(vaultToken, config)
             init(targets, vaultManager)

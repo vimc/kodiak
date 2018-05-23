@@ -8,7 +8,7 @@ interface SecretManager {
     fun write(name: String, key: String, value: String)
 }
 
-class VaultManager(token: String, config: Config) : SecretManager {
+class VaultManager(githubToken: String, config: Config) : SecretManager {
 
     private val vaultConfig = VaultConfig()
             .address(config.vaultAddress)
@@ -17,13 +17,18 @@ class VaultManager(token: String, config: Config) : SecretManager {
     private val vault = Vault(vaultConfig)
 
     init {
-        vault.auth().loginByGithub(token)
+        vault.auth().loginByGithub(githubToken)
     }
 
     private val kodiakPath = "secret/kodiak/"
 
     override fun read(name: String, key: String): String? {
-        return vault.logical().read(kodiakPath + name)?.data?.get(key)
+        val list = vault.logical().list(kodiakPath)
+        return if (!list.contains(name)) {
+            null
+        } else {
+            vault.logical().read(kodiakPath + name)?.data?.get(key)
+        }
     }
 
     override fun write(name: String, key: String, value: String) {
