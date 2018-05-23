@@ -3,6 +3,11 @@ package org.vaccineimpact.kodiak
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+val doc = (
+        """Usage:
+        |  kodiak init (--vault-token=VAULT_TOKEN) [TARGET...]
+        |  kodiak backup
+        |  kodiak restore""".trimMargin())
 
 class Kodiak(private val config: JsonConfig,
              private val encryption: Encryption,
@@ -14,7 +19,7 @@ class Kodiak(private val config: JsonConfig,
 
             @Suppress("UNCHECKED_CAST")
             val targets = opts["TARGET"] as ArrayList<String>
-            val vaultToken = opts["VAULT_TOKEN"] as String
+            val vaultToken = opts["--vault-token"] as String
 
             val vaultManager = VaultManager(vaultToken, config)
             init(targets, vaultManager)
