@@ -1,14 +1,18 @@
 package org.vaccineimpact.kodiak.tests
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Before
 import org.junit.Test
 import org.vaccineimpact.kodiak.JsonConfig
-import org.vaccineimpact.kodiak.Config
-
 
 class ConfigTests : BaseTests() {
 
-    private val sut: Config = JsonConfig(testConfigSource)
+    private var sut: JsonConfig = JsonConfig(testConfigSource)
+
+    @Before
+    fun createConfig() {
+        sut = JsonConfig(testConfigSource)
+    }
 
     @Test
     fun canParseStarportPath() {
@@ -24,14 +28,32 @@ class ConfigTests : BaseTests() {
     fun canParseConfigTargets() {
 
         val targets = sut.targets
-        assertThat(targets.count()).isEqualTo(1)
+        assertThat(targets.count()).isEqualTo(2)
 
         val target = targets[0]
 
         assertThat(target.id).isEqualTo("t1")
         assertThat(target.encrypted).isTrue()
-        assertThat(target.localPath).isEqualTo("/test/starport/testtarget")
+        assertThat(target.localPath).isEqualTo("/test/starport/testtarget1")
         assertThat(target.remoteBucket).isEqualTo("testbucket")
+    }
+
+    @Test
+    fun savesToFile() {
+
+        // confirm that we're starting with 2 targets
+        assertThat(sut.targets.count()).isEqualTo(2)
+
+        // setup: filter the targets
+        val filteredTargets = sut.targets.filter({ it.id == "t1" })
+        sut.save(filteredTargets)
+
+        // test: should now only have 1 target
+        assertThat(sut.targets.count()).isEqualTo(1)
+
+        // test: a newly instantiated config from the same source file should have the same properties
+        val newConfig = JsonConfig(testConfigSource)
+        assertThat(sut).isEqualTo(newConfig)
     }
 
 }

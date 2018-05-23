@@ -1,12 +1,20 @@
 {
   "starport_path": "/test/starport",
   "working_path": "/test/kodiak",
+  "aws_id": "id",
+  "aws_secret": "secret",
   "targets": [
     {
       "id": "t1",
       "encrypted": true,
       "remote_bucket": "testbucket",
-      "local_path": "testtarget"
+      "local_path": "testtarget1"
+    },
+    {
+      "id": "t2",
+      "encrypted": true,
+      "remote_bucket": "testbucket",
+      "local_path": "testtarget2"
     }
   ]
 }

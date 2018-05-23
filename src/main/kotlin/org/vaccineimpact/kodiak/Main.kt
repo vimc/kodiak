@@ -22,7 +22,7 @@ fun main(args: Array<String>) {
     return kodiak.main(opts)
 }
 
-class Kodiak(private val config: Config,
+class Kodiak(private val config: JsonConfig,
              private val logger: Logger = LoggerFactory.getLogger(Kodiak::class.java)) {
 
     fun main(opts: Map<String, Any>) {
@@ -50,9 +50,12 @@ class Kodiak(private val config: Config,
         logger.info("Chosen targets: ${targets.joinToString { it }}")
     }
 
-    fun init(targets: List<String>) {
+    fun init(targets: ArrayList<String>) {
         logger.info("init")
         requireTargets(targets)
+
+        val filteredTargets = config.targets.filter({ targets.contains(it.id) })
+        config.save(filteredTargets)
     }
 
     fun backup() {
