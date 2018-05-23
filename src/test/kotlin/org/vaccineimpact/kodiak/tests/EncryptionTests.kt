@@ -6,7 +6,7 @@ import org.vaccineimpact.kodiak.SodiumEncryption
 
 class EncryptionTests : BaseTests() {
 
-    private val sut = SodiumEncryption()
+    private val sut = SodiumEncryption.instance
 
     @Test
     fun createsEncryptionKey() {
