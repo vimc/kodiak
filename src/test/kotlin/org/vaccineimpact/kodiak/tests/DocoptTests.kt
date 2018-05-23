@@ -12,13 +12,9 @@ class DocoptTests : BaseTests() {
     fun initRequiresVaultToken() {
 
         assertThatThrownBy {
-            Docopt(doc)
-                    .withExit(false)
-                    .parse(listOf("init", "t1"))
-        }
-                .isInstanceOf(DocoptExitException::class.java)
+            Docopt(doc).withExit(false).parse(listOf("init", "t1"))
+        }.isInstanceOf(DocoptExitException::class.java)
 
-        Docopt(doc)
-                .parse(listOf("init", "--vault-token=token", "t1"))
+        Docopt(doc).parse(listOf("init", "--vault-token=token", "t1"))
     }
 }
