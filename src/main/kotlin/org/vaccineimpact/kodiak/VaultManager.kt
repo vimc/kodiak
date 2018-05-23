@@ -12,10 +12,13 @@ class VaultManager(token: String, config: Config) : SecretManager {
 
     private val vaultConfig = VaultConfig()
             .address(config.vaultAddress)
-            .token(token)
             .build()
 
     private val vault = Vault(vaultConfig)
+
+    init {
+        vault.auth().loginByGithub(token)
+    }
 
     private val kodiakPath = "secret/kodiak/"
 

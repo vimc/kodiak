@@ -66,7 +66,7 @@ data class JsonConfig(private val configPath: String) : Config {
         File(this.configPath).writeText(json)
     }
 
-    override val vaultAddress: String = this["vault_address"].asString
+    override var vaultAddress: String = this["vault_address"].asString
     override val starportPath: String = this["starport_path"].asString
     override val workingPath: String = this["working_path"].asString
     override var awsId: String? = properties["aws_id"]?.asString
