@@ -16,7 +16,6 @@ docker build --tag kodiak-build \
 
 # Run the created image
 docker run \
-    -v /dev/urandom:/dev/random \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -v $docker_auth_path:/root/.docker/config.json \
     kodiak-build

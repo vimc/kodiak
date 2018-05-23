@@ -51,8 +51,11 @@ class Kodiak(private val config: JsonConfig,
 
         val filteredTargets = config.targets.filter({ targets.contains(it.id) })
 
-        val encryptionKey = secretManager.read("encryption", "key")
-                ?: encryption.generateEncryptionKey()
+        var encryptionKey = secretManager.read("encryption", "key")
+        if (encryptionKey == null) {
+            encryptionKey = encryption.generateEncryptionKey()
+            secretManager.write("encryption", "key", encryptionKey)
+        }
 
         val awsId = secretManager.read("aws", "id") ?:
                 throw MissingSecret("awsId")
@@ -60,7 +63,6 @@ class Kodiak(private val config: JsonConfig,
         val awsSecret = secretManager.read("aws", "secret")
                 ?: throw MissingSecret("awsSecret")
 
-        secretManager.write("encryption", "key", encryptionKey)
         config.save(filteredTargets, encryptionKey, awsId, awsSecret)
     }
 

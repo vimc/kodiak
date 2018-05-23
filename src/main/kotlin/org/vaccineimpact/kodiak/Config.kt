@@ -9,9 +9,9 @@ interface Config {
     val starportPath: String
     val workingPath: String
     val targets: List<Target>
-    val awsId: String
-    val awsSecret: String
-    val encryptionKey: String
+    val awsId: String?
+    val awsSecret: String?
+    val encryptionKey: String?
     val vaultAddress: String
 }
 
@@ -69,9 +69,9 @@ data class JsonConfig(private val configPath: String) : Config {
     override val vaultAddress: String = this["vault_address"].asString
     override val starportPath: String = this["starport_path"].asString
     override val workingPath: String = this["working_path"].asString
-    override var awsId: String = this.properties["aws_id"]?.asString ?: ""
-    override var awsSecret: String = this.properties["aws_secret"]?.asString ?: ""
-    override var encryptionKey: String = this.properties["encryption_key"]?.asString ?: ""
+    override var awsId: String? = properties["aws_id"]?.asString
+    override var awsSecret: String? = properties["aws_secret"]?.asString
+    override var encryptionKey: String? = this.properties["encryption_key"]?.asString
 
     override var targets: List<Target> = gson
             .fromJson<List<Target>>(this["targets"], object : TypeToken<List<Target>>() {}.type)
