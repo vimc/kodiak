@@ -3,7 +3,12 @@ package org.vaccineimpact.kodiak
 import com.bettercloud.vault.Vault
 import com.bettercloud.vault.VaultConfig
 
-class VaultManager(token: String, config: Config) {
+interface SecretManager {
+    fun read(path: String, key: String): String?
+    fun write(path: String, key: String, value: String)
+}
+
+class VaultManager(token: String, config: Config) : SecretManager {
 
     private val vaultConfig = VaultConfig()
             .address(config.vaultAddress)
@@ -12,12 +17,12 @@ class VaultManager(token: String, config: Config) {
 
     private val vault = Vault(vaultConfig)
 
-    fun read(path: String, key: String): String? {
+    override fun read(path: String, key: String): String? {
         return vault.logical().read(path)
                 .data[key]
     }
 
-    fun write(path: String, key: String, value: String) {
+    override fun write(path: String, key: String, value: String) {
         vault.logical().write(path, mapOf(key to value))
     }
 }
