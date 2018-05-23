@@ -10,10 +10,12 @@ interface Encryption {
 
 class SodiumEncryption: Encryption
 {
+    private val random = SecureRandom.getInstanceStrong()
+
     override fun generateEncryptionKey(): String
     {
         val bytes = ByteArray(NaCl.Sodium.CRYPTO_SECRETBOX_XSALSA20POLY1305_KEYBYTES)
-        SecureRandom.getInstanceStrong().nextBytes(bytes)
+        random.nextBytes(bytes)
         return Base64.getEncoder().encodeToString(bytes)
     }
 
