@@ -12,12 +12,13 @@ import org.assertj.core.api.Assertions.assertThat
 
 class KodiakTests : BaseTests() {
 
-    val config = JsonConfig(testConfigSource)
+    var config = JsonConfig(testConfigSource)
     var mockLogger = mock<Logger>()
     var sut: Kodiak = Kodiak(config, mockLogger)
 
     @Before
     fun createSut() {
+        config = JsonConfig(testConfigSource)
         mockLogger = mock<Logger>()
         sut = Kodiak(config, mockLogger)
     }
@@ -45,6 +46,7 @@ class KodiakTests : BaseTests() {
     fun requiresTargetsForInit() {
 
         sut.init(arrayListOf())
+        verify(mockLogger).info("init")
         verify(mockLogger).info("Please provide at least one target")
         verify(mockLogger).info("Available targets: t1, t2")
     }
