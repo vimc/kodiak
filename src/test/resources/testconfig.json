@@ -3,6 +3,7 @@
   "working_path": "/test/kodiak",
   "aws_id": "id",
   "aws_secret": "secret",
+  "vault_address": "http://vault",
   "targets": [
     {
       "id": "t1",

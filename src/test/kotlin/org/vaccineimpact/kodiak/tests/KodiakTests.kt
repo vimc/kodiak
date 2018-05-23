@@ -1,5 +1,6 @@
 package org.vaccineimpact.kodiak.tests
 
+import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.verify
@@ -9,18 +10,27 @@ import org.slf4j.Logger
 import org.vaccineimpact.kodiak.JsonConfig
 import org.vaccineimpact.kodiak.Kodiak
 import org.assertj.core.api.Assertions.assertThat
+import org.vaccineimpact.kodiak.Encryption
+import org.vaccineimpact.kodiak.SecretManager
 
 class KodiakTests : BaseTests() {
 
     var config = JsonConfig(testConfigSource)
     var mockLogger = mock<Logger>()
-    var sut: Kodiak = Kodiak(config, mockLogger)
+    val mockEncryption = mock<Encryption> { on { it.generateEncryptionKey() } doReturn "newfakekey" }
+    val mockSecretManager = mock<SecretManager> {
+        on {
+            it.read("secret/kodiak/encryption",
+                    "key")
+        } doReturn "fakekeyfromvault"
+    }
+    var sut: Kodiak = Kodiak(config, mockEncryption, mockLogger)
 
     @Before
     fun createSut() {
         config = JsonConfig(testConfigSource)
         mockLogger = mock<Logger>()
-        sut = Kodiak(config, mockLogger)
+        sut = Kodiak(config, mockEncryption, mockLogger)
     }
 
     @Test
@@ -36,16 +46,9 @@ class KodiakTests : BaseTests() {
     }
 
     @Test
-    fun runsInit() {
-        sut.main(mapOf("init" to true, "backup" to false,
-                "restore" to false, "TARGET" to arrayListOf("target1")))
-        verify(mockLogger).info("init")
-    }
-
-    @Test
     fun requiresTargetsForInit() {
 
-        sut.init(arrayListOf())
+        sut.init(arrayListOf(), mockSecretManager)
         verify(mockLogger).info("init")
         verify(mockLogger).info("Please provide at least one target")
         verify(mockLogger).info("Available targets: t1, t2")
@@ -54,7 +57,7 @@ class KodiakTests : BaseTests() {
     @Test
     fun logsChosenTargetsOnInit() {
 
-        sut.init(arrayListOf("t1", "t2"))
+        sut.init(arrayListOf("t1", "t2"), mockSecretManager)
         verify(mockLogger, never()).info("Please provide at least one target")
         verify(mockLogger).info("init")
         verify(mockLogger).info("Chosen targets: t1, t2")
@@ -64,9 +67,26 @@ class KodiakTests : BaseTests() {
     fun filtersTargetsOnInit() {
 
         assertThat(config.targets.count()).isEqualTo(2)
-        sut.init(arrayListOf("t1"))
+        sut.init(arrayListOf("t1"), mockSecretManager)
         val newConfig = JsonConfig(testConfigSource)
         assertThat(newConfig.targets.count()).isEqualTo(1)
-        assertThat(newConfig.targets.all({it.id == "t1"})).isTrue()
+        assertThat(newConfig.targets.all({ it.id == "t1" })).isTrue()
+    }
+
+    @Test
+    fun createsEncryptionKeyIfNonExistent() {
+
+        val mockSecretManager =
+                mock<SecretManager>{ on {it.read("secret/kodiak/encryption", "key")} doReturn null as String? }
+        sut.init(arrayListOf("t1"), mockSecretManager)
+        verify(mockSecretManager).write("secret/kodiak/encryption", "key", "newfakekey")
+        assertThat(config.encryptionKey).isEqualTo("newfakekey")
+    }
+
+    @Test
+    fun usesEncryptionKeyFromVaultIfExistent() {
+
+        sut.init(arrayListOf("t1"), mockSecretManager)
+        assertThat(config.encryptionKey).isEqualTo("fakekeyfromvault")
     }
 }
