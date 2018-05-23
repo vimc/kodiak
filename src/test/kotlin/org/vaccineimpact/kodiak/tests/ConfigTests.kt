@@ -53,7 +53,7 @@ class ConfigTests : BaseTests() {
 
         // test: a newly instantiated config from the same source file should have the same properties
         val newConfig = JsonConfig(testConfigSource)
-        assertThat(sut.toFinalConfig()).isEqualTo(newConfig.toFinalConfig())
+        assertThat(sut).isEqualTo(newConfig)
     }
 
 }
