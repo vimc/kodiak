@@ -51,11 +51,17 @@ class Kodiak(private val config: JsonConfig,
 
         val filteredTargets = config.targets.filter({ targets.contains(it.id) })
 
-        val encryptionKey = secretManager.read("secret/kodiak/encryption", "key")
+        val encryptionKey = secretManager.read("encryption", "key")
                 ?: encryption.generateEncryptionKey()
 
-        secretManager.write("secret/kodiak/encryption", "key", encryptionKey)
-        config.save(filteredTargets, encryptionKey)
+        val awsId = secretManager.read("aws", "id") ?:
+                throw MissingSecret("awsId")
+
+        val awsSecret = secretManager.read("aws", "secret")
+                ?: throw MissingSecret("awsSecret")
+
+        secretManager.write("encryption", "key", encryptionKey)
+        config.save(filteredTargets, encryptionKey, awsId, awsSecret)
     }
 
     fun backup() {
@@ -67,3 +73,5 @@ class Kodiak(private val config: JsonConfig,
         logger.info("restore")
     }
 }
+
+class MissingSecret(key: String) : Exception("Missing secret '$key'")

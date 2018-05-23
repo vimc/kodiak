@@ -7,11 +7,9 @@ import com.nhaarman.mockito_kotlin.verify
 import org.junit.Before
 import org.junit.Test
 import org.slf4j.Logger
-import org.vaccineimpact.kodiak.JsonConfig
-import org.vaccineimpact.kodiak.Kodiak
 import org.assertj.core.api.Assertions.assertThat
-import org.vaccineimpact.kodiak.Encryption
-import org.vaccineimpact.kodiak.SecretManager
+import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.vaccineimpact.kodiak.*
 
 class KodiakTests : BaseTests() {
 
@@ -20,10 +18,17 @@ class KodiakTests : BaseTests() {
     val mockEncryption = mock<Encryption> { on { it.generateEncryptionKey() } doReturn "newfakekey" }
     val mockSecretManager = mock<SecretManager> {
         on {
-            it.read("secret/kodiak/encryption",
+            it.read("encryption",
                     "key")
         } doReturn "fakekeyfromvault"
+        on {
+            it.read("aws", "id")
+        } doReturn "fakeawsid"
+        on {
+            it.read("aws", "secret")
+        } doReturn "fakeawssecret"
     }
+
     var sut: Kodiak = Kodiak(config, mockEncryption, mockLogger)
 
     @Before
@@ -77,9 +82,14 @@ class KodiakTests : BaseTests() {
     fun createsEncryptionKeyIfNonExistent() {
 
         val mockSecretManager =
-                mock<SecretManager>{ on {it.read("secret/kodiak/encryption", "key")} doReturn null as String? }
+                mock<SecretManager> {
+                    on { it.read("encryption", "key") } doReturn null as String?
+                    on { it.read("aws", "id") } doReturn "fakeawsid"
+                    on { it.read("aws", "secret") } doReturn "fakeawssecret"
+                }
+
         sut.init(arrayListOf("t1"), mockSecretManager)
-        verify(mockSecretManager).write("secret/kodiak/encryption", "key", "newfakekey")
+        verify(mockSecretManager).write("encryption", "key", "newfakekey")
         assertThat(config.encryptionKey).isEqualTo("newfakekey")
     }
 
@@ -88,5 +98,38 @@ class KodiakTests : BaseTests() {
 
         sut.init(arrayListOf("t1"), mockSecretManager)
         assertThat(config.encryptionKey).isEqualTo("fakekeyfromvault")
+    }
+
+    @Test
+    fun throwsMissingSecretExceptionIfCantFindAwsId() {
+
+        val mockSecretManager =
+                mock<SecretManager> {
+                    on { it.read("aws", "id") } doReturn null as String?
+                    on { it.read("aws", "secret") } doReturn "fakesecret"
+                }
+
+        assertThatThrownBy { sut.init(arrayListOf("t1"), mockSecretManager) }
+                .isInstanceOf(MissingSecret::class.java)
+    }
+
+    @Test
+    fun throwsMissingSecretExceptionIfCantFindAwsSecret() {
+
+        val mockSecretManager =
+                mock<SecretManager> {
+                    on { it.read("aws", "id") } doReturn "fakeid"
+                    on { it.read("aws", "secret") } doReturn null as String?
+                }
+
+        assertThatThrownBy { sut.init(arrayListOf("t1"), mockSecretManager) }
+                .isInstanceOf(MissingSecret::class.java)
+    }
+
+    @Test
+    fun savesAwsConfigOnInit() {
+        sut.init(arrayListOf("t1"), mockSecretManager)
+        assertThat(config.awsId).isEqualTo("fakeawsid")
+        assertThat(config.awsSecret).isEqualTo("fakeawssecret")
     }
 }

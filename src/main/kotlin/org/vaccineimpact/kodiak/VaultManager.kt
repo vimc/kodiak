@@ -4,8 +4,8 @@ import com.bettercloud.vault.Vault
 import com.bettercloud.vault.VaultConfig
 
 interface SecretManager {
-    fun read(path: String, key: String): String?
-    fun write(path: String, key: String, value: String)
+    fun read(name: String, key: String): String?
+    fun write(name: String, key: String, value: String)
 }
 
 class VaultManager(token: String, config: Config) : SecretManager {
@@ -17,12 +17,14 @@ class VaultManager(token: String, config: Config) : SecretManager {
 
     private val vault = Vault(vaultConfig)
 
-    override fun read(path: String, key: String): String? {
-        return vault.logical().read(path)
+    private val kodiakPath = "secret/kodiak/"
+
+    override fun read(name: String, key: String): String? {
+        return vault.logical().read(kodiakPath + name)
                 .data[key]
     }
 
-    override fun write(path: String, key: String, value: String) {
-        vault.logical().write(path, mapOf(key to value))
+    override fun write(name: String, key: String, value: String) {
+        vault.logical().write(kodiakPath + name, mapOf(key to value))
     }
 }

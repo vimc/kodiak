@@ -46,11 +46,13 @@ class ConfigTests : BaseTests() {
 
         // setup: filter the targets
         val filteredTargets = sut.targets.filter({ it.id == "t1" })
-        sut.save(filteredTargets, "encryptionkey")
+        sut.save(filteredTargets, "encryptionkey", "newAwsId", "newAwsSecret")
 
         // test: should now only have 1 target
         assertThat(sut.targets.count()).isEqualTo(1)
         assertThat(sut.encryptionKey).isEqualTo("encryptionkey")
+        assertThat(sut.awsSecret).isEqualTo("newAwsSecret")
+        assertThat(sut.awsId).isEqualTo("newAwsId")
 
         // test: a newly instantiated config from the same source file should have the same properties
         val newConfig = JsonConfig(testConfigSource)

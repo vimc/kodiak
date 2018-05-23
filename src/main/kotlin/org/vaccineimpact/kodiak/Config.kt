@@ -56,9 +56,12 @@ data class JsonConfig(private val configPath: String) : Config {
         }
     }
 
-    fun save(filteredTargets: List<Target>, encryptionKey: String) {
+    fun save(filteredTargets: List<Target>, encryptionKey: String,
+             awsId: String, awsSecret: String) {
         this.targets = filteredTargets
         this.encryptionKey = encryptionKey
+        this.awsId = awsId
+        this.awsSecret = awsSecret
         val json = this.gson.toJson(this)
         File(this.configPath).writeText(json)
     }
@@ -66,8 +69,8 @@ data class JsonConfig(private val configPath: String) : Config {
     override val vaultAddress: String = this["vault_address"].asString
     override val starportPath: String = this["starport_path"].asString
     override val workingPath: String = this["working_path"].asString
-    override val awsId: String = this["aws_id"].asString
-    override val awsSecret: String = this["aws_secret"].asString
+    override var awsId: String = this.properties["aws_id"]?.asString ?: ""
+    override var awsSecret: String = this.properties["aws_secret"]?.asString ?: ""
     override var encryptionKey: String = this.properties["encryption_key"]?.asString ?: ""
 
     override var targets: List<Target> = gson
