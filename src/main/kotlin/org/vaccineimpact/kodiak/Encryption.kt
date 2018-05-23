@@ -10,8 +10,6 @@ interface Encryption {
 
 class SodiumEncryption: Encryption
 {
-    private val random = SecureRandom.getInstanceStrong()
-
     override fun generateEncryptionKey(): String
     {
         val bytes = ByteArray(NaCl.Sodium.CRYPTO_SECRETBOX_XSALSA20POLY1305_KEYBYTES)
@@ -20,6 +18,7 @@ class SodiumEncryption: Encryption
     }
 
     companion object {
+        private val random = SecureRandom.getInstanceStrong()
         val instance = SodiumEncryption()
     }
 }
