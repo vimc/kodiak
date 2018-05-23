@@ -22,6 +22,25 @@ class KodiakTests : BaseTests() {
     }
 
     @Test
+    fun runsBackup() {
+        sut.main(mapOf("backup" to true, "init" to false, "restore" to false))
+        verify(mockLogger).info("backup")
+    }
+
+    @Test
+    fun runsRestore() {
+        sut.main(mapOf("restore" to true, "init" to false, "backup" to false))
+        verify(mockLogger).info("restore")
+    }
+
+    @Test
+    fun runsInit() {
+        sut.main(mapOf("init" to true, "backup" to false,
+                "restore" to false, "TARGET" to arrayListOf("target1")))
+        verify(mockLogger).info("init")
+    }
+
+    @Test
     fun requiresTargetsForInit() {
 
         sut.init(listOf())

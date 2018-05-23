@@ -1,34 +1,40 @@
 package org.vaccineimpact.kodiak
 
-import org.slf4j.LoggerFactory
+import org.docopt.Docopt
 import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
+private val doc = (
+        """Usage:
+        |  kodiak init [TARGET...]
+        |  kodiak backup
+        |  kodiak restore""".trimMargin())
+
 
 fun main(args: Array<String>) {
+
+    val opts = Docopt(doc)
+            .parse(args.toList())
 
     val config = JsonConfig(EnvironmentProperties.configSource)
     val kodiak = Kodiak(config)
 
-    return kodiak.main(args)
+    return kodiak.main(opts)
 }
 
 class Kodiak(private val config: Config,
              private val logger: Logger = LoggerFactory.getLogger(Kodiak::class.java)) {
 
-    private val allowedModes = arrayOf("backup", "restore", "init")
+    fun main(opts: Map<String, Any>) {
 
-    fun main(args: Array<String>) {
-        if (args.isEmpty() || !allowedModes.contains(args[0])) {
-            logger.info("Please provide a command-line argument of either 'backup', 'restore' or 'init'")
-            return
+        if (opts["init"] as Boolean) {
+            @Suppress("UNCHECKED_CAST")
+            init(opts["TARGET"] as ArrayList<String>)
         }
-
-        if (args[0] == "init"){
-            init(args.drop(1))
-        }
-        if (args[0] == "backup"){
+        if (opts["backup"] as Boolean) {
             backup()
         }
-        if (args[0] == "restore"){
+        if (opts["restore"] as Boolean) {
             restore()
         }
     }
@@ -36,12 +42,12 @@ class Kodiak(private val config: Config,
     private fun requireTargets(targets: List<String>) {
         if (!targets.any()) {
             logger.info("Please provide at least one target")
-            logger.info("Available targets: ${config.targets.joinToString{ it.id }}")
+            logger.info("Available targets: ${config.targets.joinToString { it.id }}")
 
             return
         }
 
-        logger.info("Chosen targets: ${targets.joinToString{ it }}")
+        logger.info("Chosen targets: ${targets.joinToString { it }}")
     }
 
     fun init(targets: List<String>) {
