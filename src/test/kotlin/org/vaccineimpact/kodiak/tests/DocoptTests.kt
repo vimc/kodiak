@@ -17,6 +17,6 @@ class DocoptTests : BaseTests() {
         // this will still throw an exception because we have provided a
         // nonsense vault token
         assertThatThrownBy { main(arrayOf("init", "--vault-token=token", "t1")) }
-                .isInstanceOf(VaultException::class.java)
+                .isNotInstanceOf(DocoptExitException::class.java)
     }
 }
