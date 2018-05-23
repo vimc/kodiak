@@ -5,7 +5,6 @@ import org.docopt.Docopt
 fun main(args: Array<String>) {
 
     val opts = Docopt(doc)
-            .withExit(false)
             .parse(args.toList())
 
     val config = JsonConfig(EnvironmentProperties.configSource)
