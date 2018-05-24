@@ -3,7 +3,7 @@
   "working_path": "/test/kodiak",
   "aws_id": "id",
   "aws_secret": "secret",
-  "vault_address": "//https://support.montagu.dide.ic.ac.uk:8200",
+  "vault_address": "https://support.montagu.dide.ic.ac.uk:8200",
   "targets": [
     {
       "id": "t1",
