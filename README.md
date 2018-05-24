@@ -114,3 +114,8 @@ reversed.
     ]
 }
 ```
+
+# Development
+Run `./gradlew :copyDevProperties` to move a test config file into place. You 
+can then just run from within the IDE by setting up a debug configuration with
+the appropriate command line arguments.
