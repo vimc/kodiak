@@ -9,10 +9,10 @@ import java.util.*
 
 // I posted a question about this here:
 // https://stackoverflow.com/questions/50511661/is-there-a-standard-way-to-turn-a-kotlin-sequence-into-a-java-util-enumeration
-fun <T> Sequence<T>.toEnumeration(): Enumeration<T> {
+fun <TInput, TOutput> Sequence<TInput>.toEnumeration(mapper: (TInput) -> TOutput): Enumeration<TOutput> {
     val iterator = this.iterator()
-    return object : Enumeration<T> {
+    return object : Enumeration<TOutput> {
         override fun hasMoreElements() = iterator.hasNext()
-        override fun nextElement(): T = iterator.next()
+        override fun nextElement() = mapper(iterator.next())
     }
 }
