@@ -17,14 +17,10 @@ def kodiak_docker_version = 'UNKNOWN'
 if (hasProperty('docker_version')) {
     kodiak_docker_version = docker_version
 }
+
 def kodiak_docker_name = 'kodiak'
 if (hasProperty('docker_name')) {
     kodiak_docker_name = docker_name
-}
-
-def base_image = 'docker.montagu.dide.ic.ac.uk:5000/openjdk-libsodium:master'
-if (hasProperty('libsodium_image')) {
-    base_image = libsodium_image
 }
 
 apply plugin: 'kotlin'
@@ -64,10 +60,7 @@ compileTestKotlin {
 }
 
 distDocker {
-
-    setEnvironment("production", "true")
-
-    baseImage = base_image
+    dockerfile = "app.Dockerfile"
     dependsOn = [build]
     push = true
     tag = kodiak_docker_name

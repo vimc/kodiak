@@ -25,6 +25,9 @@ COPY gradle /kodiak/gradle/
 WORKDIR /kodiak
 RUN ./gradlew
 
+# Copy app dockerfile
+COPY app.Dockerfile /kodiak/
+
 # Pull in dependencies
 COPY ./build.gradle /kodiak/
 RUN ./gradlew

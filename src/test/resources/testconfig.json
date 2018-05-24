@@ -1,7 +1,7 @@
 {
   "starport_path": "/test/starport",
   "working_path": "/test/kodiak",
-  "vault_address": "https://support.montagu.dide.ic.ac.uk:8200",
+  "vault_address": "http://localhost:1234",
   "targets": [
     {
       "id": "t1",

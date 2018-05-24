@@ -9,10 +9,12 @@ builds a new docker image, and installs the `./kodiak` wrapper script to your pa
 
 ### Init
 ```
-kodiak init TARGETS...
+kodiak init (--github-token=GITHUB_TOKEN) TARGETS...
 ```
 Filter the config to the specified targets. Only these targets can be interacted with
  in this Kodiak instance. These targets become default in other commands (backup, restore, list).
+ A github token must be passed that can be used to authenticate with the vault to retrieve
+ secrets for encryption and communication with AWS.
 
 ### Restore
 ```
@@ -91,10 +93,14 @@ chunked encrypted files. So for backup files move from `starport_path` to
 reversed.
 
 `local_path`s in the targets are relative to the `starport_path`.
+`vault_address` is the location of the vault where the encryption key and AWS credentials 
+are stored.
+
 
 ```
 {
     "config": {
+        "vault_address": "http://vault:8200",
         "starport_path": "/home/montagu/starport",
         "working_path": "/home/montagu/starport/kodiak"
     },
@@ -114,3 +120,21 @@ reversed.
     ]
 }
 ```
+##Development
+### Running without docker
+There is a gradle task for running the app locally (i.e. not containerised.) The command 
+line arguments are passed as a system property:
+
+```
+./gradlew runAppLocally -PcommandLineArgs="backup testtarget"
+
+```
+
+###Testing
+Unit tests can be run from an IDE or on the command line with `gradlew test`.
+
+For testing the logic around connecting to the vault, first run `./scripts/run-fake-vault.sh`
+to spin up a local vault instance. Then uncomment the `Ignore` flag in `VaultTests` and replace
+the `githubToken` variable with your github token. After testing destroy the fake vault
+with `./scripts/stop-fake-vault.sh`
+

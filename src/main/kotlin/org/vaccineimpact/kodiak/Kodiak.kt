@@ -52,6 +52,7 @@ class Kodiak(private val config: JsonConfig,
         val filteredTargets = config.targets.filter({ targets.contains(it.id) })
 
         var encryptionKey = secretManager.read("encryption", "key")
+
         if (encryptionKey == null) {
             encryptionKey = encryption.generateEncryptionKey()
             secretManager.write("encryption", "key", encryptionKey)
