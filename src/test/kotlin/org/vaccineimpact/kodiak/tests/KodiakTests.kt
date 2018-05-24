@@ -20,7 +20,7 @@ class KodiakTests : BaseTests() {
     val mockEncryption = mock<Encryption> { on { it.generateEncryptionKey() } doReturn "newfakekey" }
     val mockSecretManager = mock<SecretManager> {
         on {
-            it.read("secret/kodiak/encryption",
+            it.read("encryption",
                     "key")
         } doReturn "fakekeyfromvault"
     }
@@ -77,9 +77,9 @@ class KodiakTests : BaseTests() {
     fun createsEncryptionKeyIfNonExistent() {
 
         val mockSecretManager =
-                mock<SecretManager>{ on {it.read("secret/kodiak/encryption", "key")} doReturn null as String? }
+                mock<SecretManager>{ on {it.read("encryption", "key")} doReturn null as String? }
         sut.init(arrayListOf("t1"), mockSecretManager)
-        verify(mockSecretManager).write("secret/kodiak/encryption", "key", "newfakekey")
+        verify(mockSecretManager).write("encryption", "key", "newfakekey")
         assertThat(config.encryptionKey).isEqualTo("newfakekey")
     }
 
