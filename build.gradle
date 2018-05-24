@@ -62,7 +62,7 @@ compileTestKotlin {
 distDocker {
     dockerfile = "app.Dockerfile"
     dependsOn = [build]
-    push = true
+    push = false
     tag = kodiak_docker_name
     tagVersion = kodiak_docker_version
 }
