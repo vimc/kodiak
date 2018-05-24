@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
 set -e
 
-if [[ ($# -lt 2) ]]; then
-    echo "Usage: ./setup.sh PATH_TO_CONFIG [TARGET ...]"
+if [[ ($# -lt 1) ]]; then
+    echo "Usage: ./setup.sh PATH_TO_CONFIG"
     exit -1;
 fi
 
 config_path=$1
-shift && targets="$@"   # Targets is all the args after the first
 
 HERE=${BASH_SOURCE%/*}
 
@@ -24,13 +23,12 @@ docker rm kodiak_helper
 
 docker volume create kodiak_logs
 
-# Rewrite the config to only the chosen targets
-${HERE}/kodiak init $targets
-
 # Install kodiak
 ln -sf $(realpath ${HERE}/kodiak) /usr/local/bin/kodiak
 
 echo "-----------------------------------------------"
-echo "Setup complete. You can now: "
+echo "Setup complete. You must first run: "
+echo "init:             Run kodiak init (--github-token=GITHUB_TOKEN) [TARGETS...]"
+echo "Before you can run any other commands, e.g."
 echo "backup:           Run kodiak backup"
 echo "restore:          Run kodiak restore"
