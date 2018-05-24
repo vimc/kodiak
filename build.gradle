@@ -45,6 +45,7 @@ dependencies {
     compile "com.offbytwo:docopt:0.6.0.20150202"
     compile 'org.abstractj.kalium:kalium:0.7.0'
     compile('com.bettercloud:vault-java-driver:3.1.0')
+    compile "org.apache.commons:commons-compress:1.16.1"
 
     testCompile "junit:junit:4.12"
     testCompile "org.mockito:mockito-core:2.+"

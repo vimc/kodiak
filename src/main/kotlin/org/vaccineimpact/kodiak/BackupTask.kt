@@ -1,9 +1,14 @@
 package org.vaccineimpact.kodiak
 
+import org.apache.commons.compress.archivers.ArchiveOutputStream
+import org.apache.commons.compress.archivers.ArchiveStreamFactory
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry
+import org.apache.commons.compress.utils.IOUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.File
-import java.io.SequenceInputStream
+import java.io.*
+import kotlin.concurrent.thread
+
 
 class BackupTask {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -11,12 +16,38 @@ class BackupTask {
     fun backup(target: Target, config: Config) {
         val source = File(config.starportPath, target.localPath)
         logger.info("Reading from ${source.absolutePath}")
+
         val stream = source.walk()
-                .filter { it.isFile }
                 .sortedBy { it.relativeTo(source) }
-                .map { it.inputStream() }
-                .let { SequenceInputStream(it.toEnumeration()) }
-        // This is just a placeholder until we add the next bit on
-        println(stream.bufferedReader().readText())
+                .toTarStream(source)
+        File("${target.id}.tar").outputStream().use { out ->
+            IOUtils.copy(stream, out)
+        }
     }
+}
+
+fun Sequence<File>.toTarStream(source: File): InputStream {
+    val outputStream = PipedOutputStream()
+    val inputStream = PipedInputStream(outputStream)
+    thread {
+        outputStream.use { outputStream ->
+            val archiver = ArchiveStreamFactory().createArchiveOutputStream("tar", outputStream)
+            for (file in this) {
+                archiver.addFile(file, source)
+            }
+            archiver.finish()
+        }
+    }
+    return inputStream
+}
+
+fun ArchiveOutputStream.addFile(file: File, source: File) {
+    val relative = file.relativeTo(source)
+    println(" - $relative")
+    val entry = TarArchiveEntry(file, relative.path)
+    this.putArchiveEntry(entry)
+    if (file.isFile) {
+        IOUtils.copy(file.inputStream(), this)
+    }
+    this.closeArchiveEntry()
 }
