@@ -63,9 +63,9 @@ class Kodiak(private val config: JsonConfig,
 
     private fun backup() {
         logger.info("backup")
-        val task = BackupTask()
+        val task = BackupTask(config)
         config.targets.forEach {
-            task.backup(it, config)
+            task.backup(it)
         }
     }
 
