@@ -72,7 +72,6 @@ data class JsonConfig(private val configPath: String) : Config {
 
     override var targets: List<Target> = gson
             .fromJson<List<Target>>(this["targets"], object : TypeToken<List<Target>>() {}.type)
-            .map { it.copy(localPath = "${this.starportPath}/${it.localPath}") }
 
 }
 
