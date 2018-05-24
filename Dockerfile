@@ -25,9 +25,6 @@ COPY gradle /kodiak/gradle/
 WORKDIR /kodiak
 RUN ./gradlew
 
-# Copy app dockerfile
-COPY app.Dockerfile /kodiak/
-
 # Pull in dependencies
 COPY ./build.gradle /kodiak/
 RUN ./gradlew
@@ -45,6 +42,6 @@ ENV APP_DOCKER_TAG $registry/$name
 ENV APP_DOCKER_COMMIT_TAG $registry/$name:$git_id
 ENV APP_DOCKER_BRANCH_TAG $registry/$name:$git_branch
 
-CMD ./gradlew test :docker -i -Dproduction=true -Pdocker_version=$GIT_ID -Pdocker_name=$APP_DOCKER_TAG \
+CMD ./gradlew test :distDocker -i -Dproduction=true -Pdocker_version=$GIT_ID -Pdocker_name=$APP_DOCKER_TAG \
      && docker tag $APP_DOCKER_COMMIT_TAG $APP_DOCKER_BRANCH_TAG \
      && docker push $APP_DOCKER_BRANCH_TAG
