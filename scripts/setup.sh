@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 set -e
 
-if [[ ($# -lt 1) ]]; then
-    echo "Usage: ./setup.sh PATH_TO_CONFIG"
+if [[ ($# -lt 2) ]]; then
+    echo "Usage: ./setup.sh PATH_TO_CONFIG [TARGET ...]"
     exit -1;
 fi
 
 config_path=$1
+shift && targets="$@"   # Targets is all the args after the first
 
 HERE=${BASH_SOURCE%/*}
 
@@ -23,12 +24,20 @@ docker rm kodiak_helper
 
 docker volume create kodiak_logs
 
+if [ "$VAULT_AUTH_GITHUB_TOKEN" = "" ]; then
+    echo -n "Please provide your GitHub personal access token for the vault: "
+    read -s token
+    echo ""
+    export VAULT_AUTH_GITHUB_TOKEN=${token}
+fi
+
+# Rewrite the config to only the chosen targets
+${HERE}/kodiak init $targets --github-token=${VAULT_AUTH_GITHUB_TOKEN}
+
 # Install kodiak
 ln -sf $(realpath ${HERE}/kodiak) /usr/local/bin/kodiak
 
 echo "-----------------------------------------------"
-echo "Setup complete. You must first run: "
-echo "kodiak init (--github-token=GITHUB_TOKEN) [TARGETS...]"
-echo "Before you can run any other commands, e.g."
+echo "Setup complete. You can now run: "
 echo "backup:           Run kodiak backup"
 echo "restore:          Run kodiak restore"
