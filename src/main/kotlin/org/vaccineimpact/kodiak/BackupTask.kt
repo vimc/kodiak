@@ -5,10 +5,10 @@ import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.SequenceInputStream
 
-class BackupTask {
+class BackupTask(val config: Config) {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    fun backup(target: Target, config: Config) {
+    fun backup(target: Target) {
         val source = File(config.starportPath, target.localPath)
         logger.info("Reading from ${source.absolutePath}")
         val stream = source.walk()
