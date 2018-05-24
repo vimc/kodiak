@@ -60,9 +60,9 @@ compileTestKotlin {
 }
 
 distDocker {
-    dockerfile = "app.Dockerfile"
+    baseImage = "docker.montagu.dide.ic.ac.uk:5000/openjdk-vault-libsodium:master"
     dependsOn = [build]
-    push = false
+    push = true
     tag = kodiak_docker_name
     tagVersion = kodiak_docker_version
 }
