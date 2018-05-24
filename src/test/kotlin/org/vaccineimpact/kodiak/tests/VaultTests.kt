@@ -1,39 +1,41 @@
 package org.vaccineimpact.kodiak.tests
 
-import org.junit.Ignore
+import com.nhaarman.mockito_kotlin.doReturn
+import com.nhaarman.mockito_kotlin.mock
 import org.junit.Test
-import org.vaccineimpact.kodiak.JsonConfig
-import org.vaccineimpact.kodiak.Kodiak
-import org.vaccineimpact.kodiak.SodiumEncryption
-import org.vaccineimpact.kodiak.VaultManager
+import org.vaccineimpact.kodiak.*
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.Ignore
 
+@Ignore
 class VaultTests: BaseTests() {
 
+    // for local testing put your github token here
+    private val githubToken = ""
+
     @Test
-    @Ignore
     fun read(){
 
         val config = JsonConfig(testConfigSource)
 
-        // for local testing put your github token here
-        val githubToken = ""
-
         val vault = VaultManager(githubToken, config)
-        val result = vault.read("aws", "id")
+        val result = vault.read("something", "nonexistent")
+
+        assertThat(result).isNull()
     }
 
     @Test
-    @Ignore
     fun init(){
 
         val config = JsonConfig(testConfigSource)
 
-        // for local testing put your github token here
-        val githubToken = ""
-
         val vault = VaultManager(githubToken, config)
-        val kodiak = Kodiak(config, SodiumEncryption.instance)
+        val mockEncryption = mock<Encryption>{ on {it.generateEncryptionKey()} doReturn "testkey" }
+
+        Kodiak(config, mockEncryption)
                 .init(arrayListOf("test"), vault)
+
         val result = vault.read("encryption", "key")
+        assertThat(result).isEqualTo("testkey")
     }
 }
