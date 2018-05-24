@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -ex
 
 if [[ ($# -lt 2) ]]; then
     echo "Usage: ./setup.sh PATH_TO_CONFIG [TARGET ...]"
@@ -32,7 +32,7 @@ if [ "$VAULT_AUTH_GITHUB_TOKEN" = "" ]; then
 fi
 
 # Rewrite the config to only the chosen targets
-${HERE}/kodiak init $targets --github-token=${VAULT_AUTH_GITHUB_TOKEN}
+${HERE}/kodiak init --github-token=${VAULT_AUTH_GITHUB_TOKEN} $targets
 
 # Install kodiak
 ln -sf $(realpath ${HERE}/kodiak) /usr/local/bin/kodiak

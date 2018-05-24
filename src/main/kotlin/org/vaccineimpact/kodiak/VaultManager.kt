@@ -2,6 +2,7 @@ package org.vaccineimpact.kodiak
 
 import com.bettercloud.vault.Vault
 import com.bettercloud.vault.VaultConfig
+import org.slf4j.LoggerFactory
 
 interface SecretManager {
     fun read(name: String, key: String): String?
@@ -14,15 +15,19 @@ class VaultManager(githubToken: String, config: Config) : SecretManager {
             .address(config.vaultAddress)
             .build()
 
+    private val logger = LoggerFactory.getLogger(VaultManager::class.java)
+
     private val vault = Vault(vaultConfig)
 
     init {
+        logger.info("Connecting to vault at ${config.vaultAddress}")
         vault.auth().loginByGithub(githubToken)
     }
 
     private val kodiakPath = "secret/kodiak/"
 
     override fun read(name: String, key: String): String? {
+        logger.info("reading secrets from " + kodiakPath)
         val list = vault.logical().list(kodiakPath)
         return if (!list.contains(name)) {
             null
