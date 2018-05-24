@@ -65,8 +65,7 @@ compileTestKotlin {
 
 distDocker {
 
-    setEnvironment("production", "true")
-
+    dockerfile = "app.Dockerfile"
     baseImage = base_image
     dependsOn = [build]
     push = true
