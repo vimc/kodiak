@@ -28,7 +28,7 @@ ln -sf $(realpath ${HERE}/kodiak) /usr/local/bin/kodiak
 
 echo "-----------------------------------------------"
 echo "Setup complete. You must first run: "
-echo "init:             Run kodiak init (--github-token=GITHUB_TOKEN) [TARGETS...]"
+echo "kodiak init (--github-token=GITHUB_TOKEN) [TARGETS...]"
 echo "Before you can run any other commands, e.g."
 echo "backup:           Run kodiak backup"
 echo "restore:          Run kodiak restore"
