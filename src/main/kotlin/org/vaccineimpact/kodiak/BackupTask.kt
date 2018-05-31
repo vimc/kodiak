@@ -8,7 +8,7 @@ import java.io.SequenceInputStream
 class BackupTask(val config: Config) {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    fun backup(target: Target) {
+    fun backup(target: Target): String {
         val source = File(config.starportPath, target.localPath)
         logger.info("Reading from ${source.absolutePath}")
         val stream = source.walk()
@@ -17,6 +17,6 @@ class BackupTask(val config: Config) {
                 .map { it.inputStream() }
                 .let { SequenceInputStream(it.toEnumeration()) }
         // This is just a placeholder until we add the next bit on
-        println(stream.bufferedReader().readText())
+        return stream.bufferedReader().readText()
     }
 }
