@@ -12,16 +12,24 @@ import java.io.File
 class BackupTargetTests : BaseTests() {
     @Test
     fun `backup smoke test`() {
+        // Setup
         val starport = File("/tmp/starport")
+        val working = File("/tmp/kodiak")
         val targetFolder = File("target")
         setupLocalTestFiles(starport, targetFolder)
 
         val config = mock<Config> {
             on { starportPath } doReturn starport.absolutePath
+            on { workingPath } doReturn working.absolutePath
         }
-        val target = Target("id", false, "remote", localPath = targetFolder.path)
+        val target = Target("my-target", false, "remote", localPath = targetFolder.path)
+
+        // Test
         val task = BackupTask(config)
-        assertThat(task.backup(target)).isEqualTo("FileAFileB")
+        task.backup(target)
+
+        // Expectations
+        assertThat(File(working, "my-target.tar")).exists()
     }
 
     private fun setupLocalTestFiles(starport: File, target: File) {

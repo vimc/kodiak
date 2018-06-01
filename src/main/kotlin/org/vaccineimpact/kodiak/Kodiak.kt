@@ -2,6 +2,7 @@ package org.vaccineimpact.kodiak
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.io.File
 
 val doc = (
         """Usage:
@@ -64,6 +65,7 @@ class Kodiak(private val config: JsonConfig,
     private fun backup() {
         logger.info("backup")
         val task = BackupTask(config)
+        File(config.workingPath).mkdirs()
         config.targets.forEach {
             task.backup(it)
         }

@@ -13,16 +13,15 @@ import kotlin.concurrent.thread
 class BackupTask(val config: Config) {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    fun backup(target: Target): String {
+    fun backup(target: Target) {
         val source = File(config.starportPath, target.localPath)
+        val destination = File(config.workingPath, "${target.id}.tar")
         logger.info("Reading from ${source.absolutePath}")
 
         val stream = source.walk()
                 .sortedBy { it.relativeTo(source) }
                 .toTarStream(source)
-        File("${target.id}.tar").outputStream().use { out ->
-            IOUtils.copy(stream, out)
-        }
+        destination.outputStream().use { IOUtils.copy(stream, it) }
     }
 }
 
