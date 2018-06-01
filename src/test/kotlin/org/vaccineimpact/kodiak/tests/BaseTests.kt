@@ -20,7 +20,7 @@ abstract class BaseTests {
         File(testConfigSource).writeText("""{
               "starport_path": "/test/starport",
               "working_path": "/test/kodiak",
-              "vault_address": "http://vault",
+              "vault_address": "http://localhost:1234",
               "aws_id": "id",
               "aws_secret": "secret",
               "targets": [
