@@ -7,7 +7,7 @@ sleep 2
 
 HERE=$(dirname $0)
 
-VAULT_ADDR='http://127.0.0.1:1234'
+export VAULT_ADDR='http://127.0.0.1:1234'
 
 vault auth "myroot"
 vault auth-enable github
