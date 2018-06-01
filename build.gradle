@@ -80,13 +80,23 @@ task copyDevProperties(type: Copy) {
     outputs.upToDateWhen { false }
 }
 
-
 task install_libsodium() {
     def file = file("/usr/local/lib/libsodium.so.23.1.0")
     if (!file.exists()) {
         throw new Exception("libsodium is not installed. Please run `cd libsodium && sudo ./install-libsodium.sh`")
     }
 }
+
+task startVault(type: Exec) {
+    commandLine 'bash', './scripts/run-fake-vault.sh'
+}
+
+task stopVault(type: Exec) {
+    commandLine 'bash', './scripts/stop-fake-vault.sh'
+}
+
+test.dependsOn startVault
+test.finalizedBy stopVault
 
 if (System.getProperty("production")) {
     processResources.dependsOn copyDockerProperties

@@ -9,7 +9,7 @@ val doc = (
         |  kodiak backup
         |  kodiak restore""".trimMargin())
 
-class Kodiak(private val config: JsonConfig,
+class Kodiak(private val config: Config,
              private val encryption: Encryption,
              private val logger: Logger = LoggerFactory.getLogger(Kodiak::class.java)) {
 
@@ -19,9 +19,9 @@ class Kodiak(private val config: JsonConfig,
 
             @Suppress("UNCHECKED_CAST")
             val targets = opts["TARGET"] as ArrayList<String>
-            val vaultToken = opts["--github-token"] as String
+            val githubToken = opts["--github-token"] as String
 
-            val vaultManager = VaultManager(vaultToken, config)
+            val vaultManager = VaultManager.fromGithubAuth(githubToken, config)
             init(targets, vaultManager)
         }
         if (opts["backup"] as Boolean) {

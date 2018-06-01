@@ -13,6 +13,8 @@ interface Config {
     val awsSecret: String
     val encryptionKey: String?
     val vaultAddress: String
+
+    fun save(filteredTargets: List<Target>, encryptionKey: String)
 }
 
 data class JsonConfig(private val configPath: String) : Config {
@@ -37,7 +39,7 @@ data class JsonConfig(private val configPath: String) : Config {
         }
     }
 
-    fun save(filteredTargets: List<Target>, encryptionKey: String) {
+    override fun save(filteredTargets: List<Target>, encryptionKey: String) {
         this.targets = filteredTargets
         this.encryptionKey = encryptionKey
         val json = this.gson.toJson(this)
