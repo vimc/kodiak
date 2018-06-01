@@ -15,25 +15,6 @@ interface Config {
     val vaultAddress: String
 }
 
-data class Target(val id: String,
-                  val encrypted: Boolean,
-                  val remoteBucket: String,
-                  val localPath: String)
-
-@kotlin.annotation.Target(AnnotationTarget.FIELD)
-annotation class Exclude
-
-class AnnotationExclusionStrategy : ExclusionStrategy {
-
-    override fun shouldSkipField(f: FieldAttributes): Boolean {
-        return f.getAnnotation(Exclude::class.java) != null
-    }
-
-    override fun shouldSkipClass(clazz: Class<*>): Boolean {
-        return false
-    }
-}
-
 data class JsonConfig(private val configPath: String) : Config {
 
     @Exclude
@@ -70,9 +51,10 @@ data class JsonConfig(private val configPath: String) : Config {
     override val awsSecret: String = this["aws_secret"].asString
     override var encryptionKey: String? = this.properties["encryption_key"]?.asString
 
-    override var targets: List<Target> = gson
-            .fromJson<List<Target>>(this["targets"], object : TypeToken<List<Target>>() {}.type)
-            .map { it.copy(localPath = "${this.starportPath}/${it.localPath}") }
+    override var targets: List<Target> = gson.fromJson<List<Target>>(
+            this["targets"],
+            object : TypeToken<List<Target>>() {}.type
+    )
 
 }
 
