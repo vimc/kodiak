@@ -39,14 +39,7 @@ data class JsonConfig(private val configPath: String) : Config {
         }
     }
 
-    private fun getOptional(key: String): JsonElement? {
-        val x = properties[key]
-        if (x != null) {
-            return x
-        } else {
-            throw MissingConfigurationKey(key)
-        }
-    }
+    private fun getOptional(key: String): JsonElement? = properties[key]
 
     override fun save(filteredTargets: List<Target>, encryptionKey: String,
              awsId: String, awsSecret: String) {
@@ -61,7 +54,7 @@ data class JsonConfig(private val configPath: String) : Config {
     override val vaultAddress: String = get("vault_address").asString
     override val starportPath: String = get("starport_path").asString
     override val workingPath: String = get("working_path").asString
-    
+
     override var awsId: String? = getOptional("aws_id")?.asString
     override var awsSecret: String? = getOptional("aws_secret")?.asString
     override var encryptionKey: String? = getOptional("encryption_key")?.asString
