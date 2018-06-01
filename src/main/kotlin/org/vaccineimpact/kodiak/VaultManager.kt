@@ -29,6 +29,7 @@ class VaultManager(githubToken: String, config: Config) : SecretManager {
     override fun read(name: String, key: String): String? {
         logger.info("reading secrets from " + kodiakPath)
         val list = vault.logical().list(kodiakPath)
+        logger.info(list.joinToString())
         return if (!list.contains(name)) {
             null
         } else {
