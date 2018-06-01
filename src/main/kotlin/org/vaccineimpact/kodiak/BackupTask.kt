@@ -10,22 +10,26 @@ import java.io.File
 import java.io.InputStream
 import java.io.PipedInputStream
 import java.io.PipedOutputStream
-import java.time.Instant
+import java.time.Clock
 import kotlin.concurrent.thread
 
-class BackupTask(val config: Config) {
+class BackupTask(
+        private val config: Config,
+        private val s3: RemoteStorage = KodiakS3(config),
+        private val clock: Clock = Clock.systemUTC()
+) {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     fun backup(target: Target) {
         val source = File(config.starportPath, target.localPath)
         val bucket = "montagu-kodiak-${target.id}"
-        val key = Instant.now().toString()
+        val key = clock.instant().toString()
 
         logger.info("Reading from ${source.absolutePath}")
         source.walk()
                 .sortedBy { it.relativeTo(source) }
                 .toTarStream(source)
-                .let { stream -> KodiakS3(config).backup(bucket, key, stream) }
+                .let { stream -> s3.backup(bucket, key, stream) }
     }
 }
 

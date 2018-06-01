@@ -5,10 +5,14 @@ import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.AmazonS3ClientBuilder
 import java.io.InputStream
 
-class KodiakS3(config: Config) {
+interface RemoteStorage {
+    fun backup(bucket: String, key: String, stream: InputStream)
+}
+
+class KodiakS3(config: Config) : RemoteStorage {
     private val client = makeS3Client(config)
 
-    fun backup(bucket: String, key: String, stream: InputStream) {
+    override fun backup(bucket: String, key: String, stream: InputStream) {
         if (!client.doesBucketExistV2(bucket)) {
             client.createBucket(bucket)
         }

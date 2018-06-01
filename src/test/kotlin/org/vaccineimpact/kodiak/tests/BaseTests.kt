@@ -23,18 +23,19 @@ abstract class BaseTests {
               "vault_address": "http://vault",
               "aws_id": "id",
               "aws_secret": "secret",
+              "aws_region": "eu-west-2",
               "targets": [
                 {
-                  "id": "t1",
+                  "id": "test-a",
                   "encrypted": true,
                   "remote_bucket": "testbucket",
-                  "local_path": "testtarget1"
+                  "local_path": "testtarget_a"
                 },
                 {
-                  "id": "t2",
+                  "id": "test-b",
                   "encrypted": true,
                   "remote_bucket": "testbucket",
-                  "local_path": "testtarget2"
+                  "local_path": "testtarget_b"
                 }
               ]
             }""")
