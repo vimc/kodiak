@@ -3,19 +3,20 @@
   "working_path": "/tmp/kodiak",
   "aws_id": "id",
   "aws_secret": "secret",
+  "aws_region": "eu-west-2",
   "vault_address": "https://support.montagu.dide.ic.ac.uk:8200",
   "targets": [
     {
-      "id": "test",
+      "id": "test-a",
       "encrypted": true,
       "remote_bucket": "testbucket",
-      "local_path": "testtarget"
+      "local_path": "testtarget_a"
     },
     {
-      "id": "test2",
+      "id": "test-b",
       "encrypted": true,
       "remote_bucket": "testbucket",
-      "local_path": "testtarget2"
+      "local_path": "testtarget_b"
     }
   ]
 }

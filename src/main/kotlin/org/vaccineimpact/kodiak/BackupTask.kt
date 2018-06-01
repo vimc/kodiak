@@ -6,22 +6,26 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry
 import org.apache.commons.compress.utils.IOUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.*
+import java.io.File
+import java.io.InputStream
+import java.io.PipedInputStream
+import java.io.PipedOutputStream
+import java.time.Instant
 import kotlin.concurrent.thread
-
 
 class BackupTask(val config: Config) {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     fun backup(target: Target) {
         val source = File(config.starportPath, target.localPath)
-        val destination = File(config.workingPath, "${target.id}.tar")
-        logger.info("Reading from ${source.absolutePath}")
+        val bucket = "montagu-kodiak-${target.id}"
+        val key = Instant.now().toString()
 
-        val stream = source.walk()
+        logger.info("Reading from ${source.absolutePath}")
+        source.walk()
                 .sortedBy { it.relativeTo(source) }
                 .toTarStream(source)
-        destination.outputStream().use { IOUtils.copy(stream, it) }
+                .let { stream -> KodiakS3(config).backup(bucket, key, stream) }
     }
 }
 

@@ -3,6 +3,7 @@
   "working_path": "/tmp/kodiak",
   "aws_id": "id",
   "aws_secret": "secret",
+  "aws_region": "eu-west-2",
   "vault_address": "http://vault",
   "targets": [
     {
