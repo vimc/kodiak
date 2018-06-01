@@ -30,7 +30,16 @@ data class JsonConfig(private val configPath: String) : Config {
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .create()
 
-    private operator fun get(key: String): JsonElement {
+    private fun get(key: String): JsonElement {
+        val x = properties[key]
+        if (x != null) {
+            return x
+        } else {
+            throw MissingConfigurationKey(key)
+        }
+    }
+
+    private fun getOptional(key: String): JsonElement? {
         val x = properties[key]
         if (x != null) {
             return x
@@ -49,15 +58,16 @@ data class JsonConfig(private val configPath: String) : Config {
         File(this.configPath).writeText(json)
     }
 
-    override val vaultAddress: String = this["vault_address"].asString
-    override val starportPath: String = this["starport_path"].asString
-    override val workingPath: String = this["working_path"].asString
-    override var awsId: String? = properties["aws_id"]?.asString
-    override var awsSecret: String? = properties["aws_secret"]?.asString
-    override var encryptionKey: String? = this.properties["encryption_key"]?.asString
+    override val vaultAddress: String = get("vault_address").asString
+    override val starportPath: String = get("starport_path").asString
+    override val workingPath: String = get("working_path").asString
+    
+    override var awsId: String? = getOptional("aws_id")?.asString
+    override var awsSecret: String? = getOptional("aws_secret")?.asString
+    override var encryptionKey: String? = getOptional("encryption_key")?.asString
 
     override var targets: List<Target> = gson.fromJson<List<Target>>(
-            this["targets"],
+            this.get("targets"),
             object : TypeToken<List<Target>>() {}.type
     )
 
