@@ -31,6 +31,7 @@ RUN ./gradlew
 
 # Copy source
 COPY ./src/ /kodiak/src/
+COPY ./scripts/ /kodiak/scripts/
 
 ARG git_id='UNKNOWN'
 ARG git_branch='UNKNOWN'
