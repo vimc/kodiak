@@ -34,7 +34,7 @@ class ConfigTests : BaseTests() {
 
         assertThat(target.id).isEqualTo("t1")
         assertThat(target.encrypted).isTrue()
-        assertThat(target.localPath).isEqualTo("/test/starport/testtarget1")
+        assertThat(target.localPath).isEqualTo("testtarget1")
         assertThat(target.remoteBucket).isEqualTo("testbucket")
     }
 

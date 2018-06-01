@@ -7,11 +7,8 @@ import com.nhaarman.mockito_kotlin.verify
 import org.junit.Before
 import org.junit.Test
 import org.slf4j.Logger
-import org.vaccineimpact.kodiak.JsonConfig
-import org.vaccineimpact.kodiak.Kodiak
 import org.assertj.core.api.Assertions.assertThat
-import org.vaccineimpact.kodiak.Encryption
-import org.vaccineimpact.kodiak.SecretManager
+import org.vaccineimpact.kodiak.*
 
 class KodiakTests : BaseTests() {
 
@@ -70,7 +67,14 @@ class KodiakTests : BaseTests() {
         sut.init(arrayListOf("t1"), mockSecretManager)
         val newConfig = JsonConfig(testConfigSource)
         assertThat(newConfig.targets.count()).isEqualTo(1)
-        assertThat(newConfig.targets.all({ it.id == "t1" })).isTrue()
+        assertThat(newConfig.targets).containsExactly(
+                Target(
+                        id = "t1",
+                        encrypted = true,
+                        remoteBucket = "testbucket",
+                        localPath = "testtarget1"
+                )
+        )
     }
 
     @Test

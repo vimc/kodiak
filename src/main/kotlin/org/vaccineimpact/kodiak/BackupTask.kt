@@ -13,7 +13,7 @@ import kotlin.concurrent.thread
 class BackupTask(val config: Config) {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    fun backup(target: Target) {
+    fun backup(target: Target): String {
         val source = File(config.starportPath, target.localPath)
         logger.info("Reading from ${source.absolutePath}")
 
