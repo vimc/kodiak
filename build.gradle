@@ -94,7 +94,7 @@ if (System.getProperty("production")) {
     processResources.dependsOn copyDevProperties
 }
 
-// usage: ./gradlew runAppLocally -PcommandLineArgs="init target1"
+// usage: ./gradlew runAppLocally -PcommandLineArgs="init --github-token=token target1"
 task runAppLocally(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 

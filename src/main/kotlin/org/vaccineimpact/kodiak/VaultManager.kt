@@ -21,6 +21,7 @@ class VaultManager(githubToken: String, config: Config) : SecretManager {
 
     init {
         logger.info("Connecting to vault at ${config.vaultAddress}")
+        logger.info("using github token: ${githubToken}")
         vault.auth().loginByGithub(githubToken)
         logger.info("using token: ${vaultConfig.token}")
     }
