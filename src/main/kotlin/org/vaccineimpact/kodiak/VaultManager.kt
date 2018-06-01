@@ -11,19 +11,27 @@ interface SecretManager {
 
 class VaultManager(githubToken: String, config: Config) : SecretManager {
 
-    private val vaultConfig = VaultConfig()
+    private var vaultConfig = VaultConfig()
             .address(config.vaultAddress)
             .build()
 
     private val logger = LoggerFactory.getLogger(VaultManager::class.java)
 
-    private val vault = Vault(vaultConfig)
+    private var vault = Vault(vaultConfig)
 
     init {
+
         logger.info("Connecting to vault at ${config.vaultAddress}")
-        logger.info("using github token: ${githubToken}")
-        vault.auth().loginByGithub(githubToken)
-        logger.info("using token: ${vaultConfig.token}")
+        val auth = vault.auth().loginByGithub(githubToken)
+
+        // now rebuild the vault config with the token obtained by the github login
+        vaultConfig = VaultConfig()
+                .address(config.vaultAddress)
+                .token(auth.authClientToken)
+                .build()
+
+        // and rebuild the vault client with the new config
+        vault = Vault(vaultConfig)
     }
 
     private val kodiakPath = "secret/kodiak/"
