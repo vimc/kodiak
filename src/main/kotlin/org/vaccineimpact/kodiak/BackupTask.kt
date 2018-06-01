@@ -1,8 +1,9 @@
 package org.vaccineimpact.kodiak
 
 import org.apache.commons.compress.archivers.ArchiveOutputStream
-import org.apache.commons.compress.archivers.ArchiveStreamFactory
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream
+import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream
 import org.apache.commons.compress.utils.IOUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -15,26 +16,24 @@ class BackupTask(val config: Config) {
 
     fun backup(target: Target) {
         val source = File(config.starportPath, target.localPath)
-        val destination = File(config.workingPath, "${target.id}.tar")
+        val destination = File(config.workingPath, "${target.id}.tar.gz")
         logger.info("Reading from ${source.absolutePath}")
 
         val stream = source.walk()
                 .sortedBy { it.relativeTo(source) }
-                .toTarStream(source)
+                .toCompressedTarStream(source)
         destination.outputStream().use { IOUtils.copy(stream, it) }
     }
 }
 
-fun Sequence<File>.toTarStream(source: File): InputStream {
+fun Sequence<File>.toCompressedTarStream(source: File): InputStream {
     val outputStream = PipedOutputStream()
     val inputStream = PipedInputStream(outputStream)
     thread {
-        outputStream.use { outputStream ->
-            val archiver = ArchiveStreamFactory().createArchiveOutputStream("tar", outputStream)
+        outputStream.buffered().gzip().tar().use { archiver ->
             for (file in this) {
                 archiver.addFile(file, source)
             }
-            archiver.finish()
         }
     }
     return inputStream
@@ -50,3 +49,7 @@ fun ArchiveOutputStream.addFile(file: File, source: File) {
     }
     this.closeArchiveEntry()
 }
+
+fun OutputStream.gzip() = GzipCompressorOutputStream(this)
+
+fun OutputStream.tar() = TarArchiveOutputStream(this)
