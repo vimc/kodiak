@@ -120,21 +120,15 @@ are stored.
     ]
 }
 ```
+
 ##Development
-### Running without docker
-There is a gradle task for running the app locally (i.e. not containerised.) The command 
-line arguments are passed as a system property:
-
-```
-./gradlew runAppLocally -PcommandLineArgs="backup testtarget"
-
-```
+Run `./gradlew :copyDevProperties` to move a test config file into place. You 
+can then just run from within the IDE by setting up a debug configuration with
+the appropriate command line arguments.
 
 ###Testing
 Unit tests can be run from an IDE or on the command line with `gradlew test`.
 
 For testing the logic around connecting to the vault, first run `./scripts/run-fake-vault.sh`
-to spin up a local vault instance. Then uncomment the `Ignore` flag in `VaultTests` and replace
-the `githubToken` variable with your github token. After testing destroy the fake vault
-with `./scripts/stop-fake-vault.sh`
-
+to spin up a local vault instance. After testing destroy the fake vault
+with `./scripts/stop-fake-vault.sh`. If running `gradlew test` these scripts will be run automatically.

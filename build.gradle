@@ -61,7 +61,7 @@ compileTestKotlin {
 
 distDocker {
     setEnvironment("production", "true")
-    baseImage = "docker.montagu.dide.ic.ac.uk:5000/openjdk-vault-libsodium:master"
+    baseImage = "docker.montagu.dide.ic.ac.uk:5000/openjdk-libsodium:master"
     dependsOn = [build]
     push = true
     tag = kodiak_docker_name
@@ -80,13 +80,23 @@ task copyDevProperties(type: Copy) {
     outputs.upToDateWhen { false }
 }
 
-
 task install_libsodium() {
     def file = file("/usr/local/lib/libsodium.so.23.1.0")
     if (!file.exists()) {
-        throw new Exception("libsodium is not installed. Please run ../libsodium/install-libsodium.sh as root")
+        throw new Exception("libsodium is not installed. Please run `cd libsodium && sudo ./install-libsodium.sh`")
     }
 }
+
+task startVault(type: Exec) {
+    commandLine 'bash', './scripts/run-fake-vault.sh'
+}
+
+task stopVault(type: Exec) {
+    commandLine 'bash', './scripts/stop-fake-vault.sh'
+}
+
+test.dependsOn startVault
+test.finalizedBy stopVault
 
 if (System.getProperty("production")) {
     processResources.dependsOn copyDockerProperties
@@ -94,7 +104,7 @@ if (System.getProperty("production")) {
     processResources.dependsOn copyDevProperties
 }
 
-// usage: ./gradlew runAppLocally -PcommandLineArgs="init target1"
+// usage: ./gradlew runAppLocally -PcommandLineArgs="init --github-token=token target1"
 task runAppLocally(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 

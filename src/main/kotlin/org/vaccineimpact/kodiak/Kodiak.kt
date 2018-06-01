@@ -5,11 +5,11 @@ import org.slf4j.LoggerFactory
 
 val doc = (
         """Usage:
-        |  kodiak init (--github-token=GITHUB_VAULT_TOKEN) [TARGET...]
+        |  kodiak init (--github-token=GITHUB_TOKEN) [TARGET...]
         |  kodiak backup
         |  kodiak restore""".trimMargin())
 
-class Kodiak(private val config: JsonConfig,
+class Kodiak(private val config: Config,
              private val encryption: Encryption,
              private val logger: Logger = LoggerFactory.getLogger(Kodiak::class.java)) {
 
@@ -19,9 +19,9 @@ class Kodiak(private val config: JsonConfig,
 
             @Suppress("UNCHECKED_CAST")
             val targets = opts["TARGET"] as ArrayList<String>
-            val vaultToken = opts["--github-token"] as String
+            val githubToken = opts["--github-token"] as String
 
-            val vaultManager = VaultManager(vaultToken, config)
+            val vaultManager = VaultManager.fromGithubAuth(githubToken, config)
             init(targets, vaultManager)
         }
         if (opts["backup"] as Boolean) {
@@ -67,8 +67,12 @@ class Kodiak(private val config: JsonConfig,
         config.save(filteredTargets, encryptionKey, awsId, awsSecret)
     }
 
-    fun backup() {
+    private fun backup() {
         logger.info("backup")
+        val task = BackupTask(config)
+        config.targets.forEach {
+            task.backup(it)
+        }
     }
 
 

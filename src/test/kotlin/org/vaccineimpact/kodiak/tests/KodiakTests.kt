@@ -75,7 +75,14 @@ class KodiakTests : BaseTests() {
         sut.init(arrayListOf("t1"), mockSecretManager)
         val newConfig = JsonConfig(testConfigSource)
         assertThat(newConfig.targets.count()).isEqualTo(1)
-        assertThat(newConfig.targets.all({ it.id == "t1" })).isTrue()
+        assertThat(newConfig.targets).containsExactly(
+                Target(
+                        id = "t1",
+                        encrypted = true,
+                        remoteBucket = "testbucket",
+                        localPath = "testtarget1"
+                )
+        )
     }
 
     @Test

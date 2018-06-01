@@ -5,37 +5,25 @@ import com.nhaarman.mockito_kotlin.mock
 import org.junit.Test
 import org.vaccineimpact.kodiak.*
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Ignore
 
-@Ignore
 class VaultTests: BaseTests() {
 
-    // for local testing put your github token here
-    private val githubToken = ""
+    private val mockConfig = mock<Config>{ on {vaultAddress} doReturn "http://127.0.0.1:1234"}
+    private val sut = VaultManager("myroot", mockConfig)
 
     @Test
     fun read(){
 
-        val config = JsonConfig(testConfigSource)
-
-        val vault = VaultManager(githubToken, config)
-        val result = vault.read("something", "nonexistent")
-
+        val result = sut.read("something", "nonexistent")
         assertThat(result).isNull()
     }
 
     @Test
-    fun init(){
+    fun write(){
 
-        val config = JsonConfig(testConfigSource)
+        sut.write("something", "new", "value")
 
-        val vault = VaultManager(githubToken, config)
-        val mockEncryption = mock<Encryption>{ on {it.generateEncryptionKey()} doReturn "testkey" }
-
-        Kodiak(config, mockEncryption)
-                .init(arrayListOf("test"), vault)
-
-        val result = vault.read("encryption", "key")
-        assertThat(result).isEqualTo("testkey")
+        val result = sut.read("something", "new")
+        assertThat(result).isEqualTo("value")
     }
 }
