@@ -61,8 +61,12 @@ class Kodiak(private val config: JsonConfig,
         config.save(filteredTargets, encryptionKey)
     }
 
-    fun backup() {
+    private fun backup() {
         logger.info("backup")
+        val task = BackupTask(config)
+        config.targets.forEach {
+            task.backup(it)
+        }
     }
 
 
