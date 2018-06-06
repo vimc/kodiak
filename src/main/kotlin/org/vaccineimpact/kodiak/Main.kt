@@ -10,5 +10,5 @@ fun main(args: Array<String>) {
     val config = JsonConfig(EnvironmentProperties.configSource)
     val kodiak = Kodiak(config, SodiumEncryption.instance)
 
-    return kodiak.main(opts)
+    return kodiak.run(opts)
 }
