@@ -9,12 +9,12 @@ interface Config {
     val starportPath: String
     val workingPath: String
     val targets: List<Target>
-    val awsId: String
-    val awsSecret: String
+    val awsId: String?
+    val awsSecret: String?
     val encryptionKey: String?
     val vaultAddress: String
 
-    fun save(filteredTargets: List<Target>, encryptionKey: String)
+    fun save(filteredTargets: List<Target>, encryptionKey: String, awsId: String, awsSecret: String)
 }
 
 data class JsonConfig(private val configPath: String) : Config {
@@ -30,7 +30,7 @@ data class JsonConfig(private val configPath: String) : Config {
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .create()
 
-    private operator fun get(key: String): JsonElement {
+    private fun get(key: String): JsonElement {
         val x = properties[key]
         if (x != null) {
             return x
@@ -39,22 +39,28 @@ data class JsonConfig(private val configPath: String) : Config {
         }
     }
 
-    override fun save(filteredTargets: List<Target>, encryptionKey: String) {
+    private fun getOptional(key: String): JsonElement? = properties[key]
+
+    override fun save(filteredTargets: List<Target>, encryptionKey: String,
+             awsId: String, awsSecret: String) {
         this.targets = filteredTargets
         this.encryptionKey = encryptionKey
+        this.awsId = awsId
+        this.awsSecret = awsSecret
         val json = this.gson.toJson(this)
         File(this.configPath).writeText(json)
     }
 
-    override val vaultAddress: String = this["vault_address"].asString
-    override val starportPath: String = this["starport_path"].asString
-    override val workingPath: String = this["working_path"].asString
-    override val awsId: String = this["aws_id"].asString
-    override val awsSecret: String = this["aws_secret"].asString
-    override var encryptionKey: String? = this.properties["encryption_key"]?.asString
+    override val vaultAddress: String = get("vault_address").asString
+    override val starportPath: String = get("starport_path").asString
+    override val workingPath: String = get("working_path").asString
+
+    override var awsId: String? = getOptional("aws_id")?.asString
+    override var awsSecret: String? = getOptional("aws_secret")?.asString
+    override var encryptionKey: String? = getOptional("encryption_key")?.asString
 
     override var targets: List<Target> = gson.fromJson<List<Target>>(
-            this["targets"],
+            this.get("targets"),
             object : TypeToken<List<Target>>() {}.type
     )
 

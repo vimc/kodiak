@@ -19,14 +19,11 @@ class VaultTests: BaseTests() {
     }
 
     @Test
-    fun init(){
+    fun write(){
 
-        val mockEncryption = mock<Encryption>{ on {it.generateEncryptionKey()} doReturn "testkey" }
+        sut.write("something", "new", "value")
 
-        Kodiak(mockConfig, mockEncryption)
-                .init(arrayListOf("test"), sut)
-
-        val result = sut.read("encryption", "key")
-        assertThat(result).isEqualTo("testkey")
+        val result = sut.read("something", "new")
+        assertThat(result).isEqualTo("value")
     }
 }

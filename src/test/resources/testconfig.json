@@ -1,8 +1,6 @@
 {
   "starport_path": "/test/starport",
   "working_path": "/test/kodiak",
-  "aws_id": "id",
-  "aws_secret": "secret",
   "vault_address": "http://localhost:1234",
   "targets": [
     {
