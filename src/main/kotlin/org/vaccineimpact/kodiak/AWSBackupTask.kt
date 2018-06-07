@@ -34,7 +34,7 @@ fun Sequence<File>.toCompressedTarStream(source: File): InputStream {
     val outputStream = PipedOutputStream()
     val inputStream = PipedInputStream(outputStream)
     thread {
-        outputStream.buffered().gzip().tar().use { archiver ->
+        outputStream.buffered().gzipped().tar().use { archiver ->
             for (file in this) {
                 archiver.addFile(file, source)
             }
@@ -54,6 +54,6 @@ fun ArchiveOutputStream.addFile(file: File, source: File) {
     this.closeArchiveEntry()
 }
 
-fun OutputStream.gzip() = GzipCompressorOutputStream(this)
+fun OutputStream.gzipped() = GzipCompressorOutputStream(this)
 
 fun OutputStream.tar() = TarArchiveOutputStream(this)
