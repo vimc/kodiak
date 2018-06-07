@@ -1,4 +1,4 @@
-ARG libsodium_image='docker.montagu.dide.ic.ac.uk:5000/openjdk-libsodium:master'
+ARG libsodium_image='docker.montagu.dide.ic.ac.uk:5000/openjdk-vault-libsodium:master'
 FROM $libsodium_image
 
 # Install docker
@@ -31,6 +31,7 @@ RUN ./gradlew
 
 # Copy source
 COPY ./src/ /kodiak/src/
+COPY ./scripts/ /kodiak/scripts/
 
 ARG git_id='UNKNOWN'
 ARG git_branch='UNKNOWN'

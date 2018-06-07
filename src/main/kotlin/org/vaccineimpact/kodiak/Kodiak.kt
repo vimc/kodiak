@@ -6,23 +6,24 @@ import java.io.File
 
 val doc = (
         """Usage:
-        |  kodiak init (--vault-token=VAULT_TOKEN) [TARGET...]
+        |  kodiak init (--github-token=GITHUB_TOKEN) [TARGET...]
         |  kodiak backup
         |  kodiak restore""".trimMargin())
 
-class Kodiak(private val config: JsonConfig,
+class Kodiak(private val config: Config,
              private val encryption: Encryption,
-             private val logger: Logger = LoggerFactory.getLogger(Kodiak::class.java)) {
+             private val logger: Logger = LoggerFactory.getLogger(Kodiak::class.java),
+             private val taskSource: TaskSource = StandardTaskSource()) {
 
-    fun main(opts: Map<String, Any>) {
+    fun run(opts: Map<String, Any>) {
 
         if (opts["init"] as Boolean) {
 
             @Suppress("UNCHECKED_CAST")
             val targets = opts["TARGET"] as ArrayList<String>
-            val vaultToken = opts["--vault-token"] as String
+            val githubToken = opts["--github-token"] as String
 
-            val vaultManager = VaultManager(vaultToken, config)
+            val vaultManager = VaultManager.fromGithubAuth(githubToken, config)
             init(targets, vaultManager)
         }
         if (opts["backup"] as Boolean) {
@@ -52,19 +53,25 @@ class Kodiak(private val config: JsonConfig,
 
         val filteredTargets = config.targets.filter({ targets.contains(it.id) })
 
-        var encryptionKey = secretManager.read("secret/kodiak/encryption", "key")
+        var encryptionKey = secretManager.read("encryption", "key")
 
         if (encryptionKey == null) {
             encryptionKey = encryption.generateEncryptionKey()
-            secretManager.write("secret/kodiak/encryption", "key", encryptionKey)
+            secretManager.write("encryption", "key", encryptionKey)
         }
 
-        config.save(filteredTargets, encryptionKey)
+        val awsId = secretManager.read("aws", "id") ?:
+                throw MissingSecret("awsId")
+
+        val awsSecret = secretManager.read("aws", "secret")
+                ?: throw MissingSecret("awsSecret")
+
+        config.save(filteredTargets, encryptionKey, awsId, awsSecret)
     }
 
     private fun backup() {
         logger.info("backup")
-        val task = BackupTask(config)
+        val task = taskSource.backupTask(config)
         File(config.workingPath).mkdirs()
         config.targets.forEach {
             task.backup(it)
@@ -76,3 +83,5 @@ class Kodiak(private val config: JsonConfig,
         logger.info("restore")
     }
 }
+
+class MissingSecret(key: String) : Exception("Missing secret '$key'")

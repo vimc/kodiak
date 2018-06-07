@@ -7,14 +7,21 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream
 import org.apache.commons.compress.utils.IOUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.*
+import java.io.File
+import java.io.InputStream
+import java.io.PipedInputStream
+import java.io.PipedOutputStream
 import kotlin.concurrent.thread
 
+interface BackupTask {
+    fun backup(target: Target)
+}
 
-class BackupTask(val config: Config) {
+
+class AWSBackupTask(val config: Config) : BackupTask {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    fun backup(target: Target) {
+    override fun backup(target: Target) {
         val source = File(config.starportPath, target.localPath)
         val destination = File(config.workingPath, "${target.id}.tar.gz")
         logger.info("Reading from ${source.absolutePath}")

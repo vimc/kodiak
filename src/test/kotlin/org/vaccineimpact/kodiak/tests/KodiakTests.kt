@@ -1,14 +1,13 @@
 package org.vaccineimpact.kodiak.tests
 
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.never
-import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockito_kotlin.*
 import org.junit.Before
 import org.junit.Test
 import org.slf4j.Logger
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.vaccineimpact.kodiak.*
+import java.io.File
 
 class KodiakTests : BaseTests() {
 
@@ -17,28 +16,46 @@ class KodiakTests : BaseTests() {
     val mockEncryption = mock<Encryption> { on { it.generateEncryptionKey() } doReturn "newfakekey" }
     val mockSecretManager = mock<SecretManager> {
         on {
-            it.read("secret/kodiak/encryption",
+            it.read("encryption",
                     "key")
         } doReturn "fakekeyfromvault"
+        on {
+            it.read("aws", "id")
+        } doReturn "fakeawsid"
+        on {
+            it.read("aws", "secret")
+        } doReturn "fakeawssecret"
     }
-    var sut: Kodiak = Kodiak(config, mockEncryption, mockLogger)
+    lateinit var mockBackupTask: BackupTask
+    lateinit var mockTaskSource: TaskSource
+
+    lateinit var sut: Kodiak
 
     @Before
     fun createSut() {
         config = JsonConfig(testConfigSource)
-        mockLogger = mock<Logger>()
-        sut = Kodiak(config, mockEncryption, mockLogger)
+        mockLogger = mock()
+        mockBackupTask = mock()
+        mockTaskSource = mock {
+            on { backupTask(any()) } doReturn mockBackupTask
+        }
+        sut = Kodiak(config, mockEncryption, mockLogger, mockTaskSource)
     }
 
     @Test
     fun runsBackup() {
-        sut.main(mapOf("backup" to true, "init" to false, "restore" to false))
+        sut.run(mapOf("backup" to true, "init" to false, "restore" to false))
         verify(mockLogger).info("backup")
+        verify(mockTaskSource).backupTask(config)
+        verify(mockBackupTask).backup(argForWhich { id == "t1" })
+        verify(mockBackupTask).backup(argForWhich { id == "t2" })
+        assertThat(File("/tmp/kodiak")).exists()
+        File("/tmp/kodiak").delete()
     }
 
     @Test
     fun runsRestore() {
-        sut.main(mapOf("restore" to true, "init" to false, "backup" to false))
+        sut.run(mapOf("restore" to true, "init" to false, "backup" to false))
         verify(mockLogger).info("restore")
     }
 
@@ -81,9 +98,14 @@ class KodiakTests : BaseTests() {
     fun createsEncryptionKeyIfNonExistent() {
 
         val mockSecretManager =
-                mock<SecretManager>{ on {it.read("secret/kodiak/encryption", "key")} doReturn null as String? }
+                mock<SecretManager> {
+                    on { it.read("encryption", "key") } doReturn null as String?
+                    on { it.read("aws", "id") } doReturn "fakeawsid"
+                    on { it.read("aws", "secret") } doReturn "fakeawssecret"
+                }
+
         sut.init(arrayListOf("t1"), mockSecretManager)
-        verify(mockSecretManager).write("secret/kodiak/encryption", "key", "newfakekey")
+        verify(mockSecretManager).write("encryption", "key", "newfakekey")
         assertThat(config.encryptionKey).isEqualTo("newfakekey")
     }
 
@@ -92,5 +114,38 @@ class KodiakTests : BaseTests() {
 
         sut.init(arrayListOf("t1"), mockSecretManager)
         assertThat(config.encryptionKey).isEqualTo("fakekeyfromvault")
+    }
+
+    @Test
+    fun throwsMissingSecretExceptionIfCantFindAwsId() {
+
+        val mockSecretManager =
+                mock<SecretManager> {
+                    on { it.read("aws", "id") } doReturn null as String?
+                    on { it.read("aws", "secret") } doReturn "fakesecret"
+                }
+
+        assertThatThrownBy { sut.init(arrayListOf("t1"), mockSecretManager) }
+                .isInstanceOf(MissingSecret::class.java)
+    }
+
+    @Test
+    fun throwsMissingSecretExceptionIfCantFindAwsSecret() {
+
+        val mockSecretManager =
+                mock<SecretManager> {
+                    on { it.read("aws", "id") } doReturn "fakeid"
+                    on { it.read("aws", "secret") } doReturn null as String?
+                }
+
+        assertThatThrownBy { sut.init(arrayListOf("t1"), mockSecretManager) }
+                .isInstanceOf(MissingSecret::class.java)
+    }
+
+    @Test
+    fun savesAwsConfigOnInit() {
+        sut.init(arrayListOf("t1"), mockSecretManager)
+        assertThat(config.awsId).isEqualTo("fakeawsid")
+        assertThat(config.awsSecret).isEqualTo("fakeawssecret")
     }
 }
