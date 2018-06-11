@@ -30,7 +30,7 @@ class BackupTargetTests : BaseTests() {
         task.backup(target)
 
         // Expectations
-        assertThat(File(working, "my-target.tar")).exists()
+        assertThat(File(working, "my-target.tar.gz")).exists()
     }
 
     @Before
