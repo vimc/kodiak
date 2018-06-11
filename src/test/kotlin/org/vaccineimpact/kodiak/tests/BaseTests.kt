@@ -18,8 +18,8 @@ abstract class BaseTests {
         // rewrite config file before each test
         // as some tests modify the file itself
         File(testConfigSource).writeText("""{
-              "starport_path": "/test/starport",
-              "working_path": "/test/kodiak",
+              "starport_path": "/tmp/starport",
+              "working_path": "/tmp/kodiak",
               "vault_address": "http://localhost:1234",
               "aws_id": "id",
               "aws_secret": "secret",

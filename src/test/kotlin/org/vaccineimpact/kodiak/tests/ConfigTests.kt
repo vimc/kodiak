@@ -16,12 +16,12 @@ class ConfigTests : BaseTests() {
 
     @Test
     fun canParseStarportPath() {
-        assertThat(sut.starportPath).isEqualTo("/test/starport")
+        assertThat(sut.starportPath).isEqualTo("/tmp/starport")
     }
 
     @Test
     fun canParseWorkingPath() {
-        assertThat(sut.workingPath).isEqualTo("/test/kodiak")
+        assertThat(sut.workingPath).isEqualTo("/tmp/kodiak")
     }
 
     @Test

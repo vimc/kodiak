@@ -1,15 +1,13 @@
 package org.vaccineimpact.kodiak.tests
 
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.never
-import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockito_kotlin.*
 import org.junit.Before
 import org.junit.Test
 import org.slf4j.Logger
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.vaccineimpact.kodiak.*
+import java.io.File
 
 class KodiakTests : BaseTests() {
 
@@ -28,25 +26,36 @@ class KodiakTests : BaseTests() {
             it.read("aws", "secret")
         } doReturn "fakeawssecret"
     }
+    lateinit var mockBackupTask: BackupTask
+    lateinit var mockTaskSource: TaskSource
 
-    var sut: Kodiak = Kodiak(config, mockEncryption, mockLogger)
+    lateinit var sut: Kodiak
 
     @Before
     fun createSut() {
         config = JsonConfig(testConfigSource)
-        mockLogger = mock<Logger>()
-        sut = Kodiak(config, mockEncryption, mockLogger)
+        mockLogger = mock()
+        mockBackupTask = mock()
+        mockTaskSource = mock {
+            on { backupTask(any()) } doReturn mockBackupTask
+        }
+        sut = Kodiak(config, mockEncryption, mockLogger, mockTaskSource)
     }
 
     @Test
     fun runsBackup() {
-        sut.main(mapOf("backup" to true, "init" to false, "restore" to false))
+        sut.run(mapOf("backup" to true, "init" to false, "restore" to false))
         verify(mockLogger).info("backup")
+        verify(mockTaskSource).backupTask(config)
+        verify(mockBackupTask).backup(argForWhich { id == "t1" })
+        verify(mockBackupTask).backup(argForWhich { id == "t2" })
+        assertThat(File("/tmp/kodiak")).exists()
+        File("/tmp/kodiak").delete()
     }
 
     @Test
     fun runsRestore() {
-        sut.main(mapOf("restore" to true, "init" to false, "backup" to false))
+        sut.run(mapOf("restore" to true, "init" to false, "backup" to false))
         verify(mockLogger).info("restore")
     }
 

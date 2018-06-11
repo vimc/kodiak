@@ -2,6 +2,7 @@ package org.vaccineimpact.kodiak
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.io.File
 
 val doc = (
         """Usage:
@@ -11,9 +12,10 @@ val doc = (
 
 class Kodiak(private val config: Config,
              private val encryption: Encryption,
-             private val logger: Logger = LoggerFactory.getLogger(Kodiak::class.java)) {
+             private val logger: Logger = LoggerFactory.getLogger(Kodiak::class.java),
+             private val taskSource: TaskSource = StandardTaskSource()) {
 
-    fun main(opts: Map<String, Any>) {
+    fun run(opts: Map<String, Any>) {
 
         if (opts["init"] as Boolean) {
 
@@ -69,7 +71,8 @@ class Kodiak(private val config: Config,
 
     private fun backup() {
         logger.info("backup")
-        val task = BackupTask(config)
+        val task = taskSource.backupTask(config)
+        File(config.workingPath).mkdirs()
         config.targets.forEach {
             task.backup(it)
         }
