@@ -21,11 +21,11 @@ interface BackupTask {
 }
 
 
-class AWSBackupTask(val config: Config) : BackupTask {
+class AWSBackupTask(
         private val config: Config,
         private val s3: RemoteStorage = KodiakS3(config),
         private val clock: Clock = Clock.systemUTC()
-) {
+): BackupTask {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     override fun backup(target: Target) {

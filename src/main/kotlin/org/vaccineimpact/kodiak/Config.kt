@@ -11,7 +11,7 @@ interface Config {
     val targets: List<Target>
     val awsId: String?
     val awsSecret: String?
-    val awsRegion: String
+    val awsRegion: String?
     val encryptionKey: String?
     val vaultAddress: String
 
