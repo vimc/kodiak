@@ -1,9 +1,6 @@
 {
   "starport_path": "/tmp/starport",
   "working_path": "/tmp/kodiak",
-  "aws_id": "id",
-  "aws_secret": "secret",
-  "aws_region": "eu-west-2",
   "vault_address": "https://support.montagu.dide.ic.ac.uk:8200",
   "targets": [
     {
