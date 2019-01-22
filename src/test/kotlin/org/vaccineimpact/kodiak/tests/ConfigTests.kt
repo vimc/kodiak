@@ -32,9 +32,9 @@ class ConfigTests : BaseTests() {
 
         val target = targets[0]
 
-        assertThat(target.id).isEqualTo("t1")
+        assertThat(target.id).isEqualTo("test-a")
         assertThat(target.encrypted).isTrue()
-        assertThat(target.localPath).isEqualTo("testtarget1")
+        assertThat(target.localPath).isEqualTo("testtarget_a")
         assertThat(target.remoteBucket).isEqualTo("testbucket")
     }
 
@@ -45,7 +45,7 @@ class ConfigTests : BaseTests() {
         assertThat(sut.targets.count()).isEqualTo(2)
 
         // setup: filter the targets
-        val filteredTargets = sut.targets.filter({ it.id == "t1" })
+        val filteredTargets = sut.targets.filter({ it.id == "test-a" })
         sut.save(filteredTargets, "encryptionkey", "newAwsId", "newAwsSecret")
 
         // test: should now only have 1 target

@@ -65,7 +65,7 @@ class KodiakTests : BaseTests() {
         sut.init(arrayListOf(), mockSecretManager)
         verify(mockLogger).info("init")
         verify(mockLogger).info("Please provide at least one target")
-        verify(mockLogger).info("Available targets: t1, t2")
+        verify(mockLogger).info("Available targets: test-a, test-b")
     }
 
     @Test
@@ -81,15 +81,15 @@ class KodiakTests : BaseTests() {
     fun filtersTargetsOnInit() {
 
         assertThat(config.targets.count()).isEqualTo(2)
-        sut.init(arrayListOf("t1"), mockSecretManager)
+        sut.init(arrayListOf("test-a"), mockSecretManager)
         val newConfig = JsonConfig(testConfigSource)
         assertThat(newConfig.targets.count()).isEqualTo(1)
         assertThat(newConfig.targets).containsExactly(
                 Target(
-                        id = "t1",
+                        id = "test-a",
                         encrypted = true,
                         remoteBucket = "testbucket",
-                        localPath = "testtarget1"
+                        localPath = "testtarget_a"
                 )
         )
     }

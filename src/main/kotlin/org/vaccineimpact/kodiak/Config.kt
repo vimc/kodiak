@@ -11,6 +11,7 @@ interface Config {
     val targets: List<Target>
     val awsId: String?
     val awsSecret: String?
+    val awsRegion: String?
     val encryptionKey: String?
     val vaultAddress: String
 
@@ -57,6 +58,7 @@ data class JsonConfig(private val configPath: String) : Config {
 
     override var awsId: String? = getOptional("aws_id")?.asString
     override var awsSecret: String? = getOptional("aws_secret")?.asString
+    override val awsRegion: String? = getOptional("aws_region")?.asString
     override var encryptionKey: String? = getOptional("encryption_key")?.asString
 
     override var targets: List<Target> = gson.fromJson<List<Target>>(

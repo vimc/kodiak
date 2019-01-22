@@ -1,12 +1,18 @@
 package org.vaccineimpact.kodiak
 
 import org.apache.commons.compress.archivers.ArchiveOutputStream
+import org.apache.commons.compress.archivers.ArchiveStreamFactory
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream
 import org.apache.commons.compress.utils.IOUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.io.File
+import java.io.InputStream
+import java.io.PipedInputStream
+import java.io.PipedOutputStream
+import java.time.Clock
 import java.io.*
 import kotlin.concurrent.thread
 
@@ -15,18 +21,23 @@ interface BackupTask {
 }
 
 
-class AWSBackupTask(val config: Config) : BackupTask {
+class AWSBackupTask(
+        private val config: Config,
+        private val s3: RemoteStorage = KodiakS3(config),
+        private val clock: Clock = Clock.systemUTC()
+): BackupTask {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     override fun backup(target: Target) {
         val source = File(config.starportPath, target.localPath)
-        val destination = File(config.workingPath, "${target.id}.tar.gz")
-        logger.info("Reading from ${source.absolutePath}")
+        val bucket = "montagu-kodiak-${target.id}"
+        val key = clock.instant().toString()
 
-        val stream = source.walk()
+        logger.info("Reading from ${source.absolutePath}")
+        source.walk()
                 .sortedBy { it.relativeTo(source) }
                 .toCompressedTarStream(source)
-        destination.outputStream().use { IOUtils.copy(stream, it) }
+                .let { stream -> s3.backup(bucket, key, stream) }
     }
 }
 
